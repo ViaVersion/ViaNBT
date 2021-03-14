@@ -13,7 +13,7 @@ public class LongArrayTagConverter implements TagConverter<LongArrayTag, long[]>
     }
 
     @Override
-    public LongArrayTag convert(String name, long[] value) {
-        return new LongArrayTag(name, value);
+    public LongArrayTag convert(long[] value) {
+        return new LongArrayTag(value);
     }
 }

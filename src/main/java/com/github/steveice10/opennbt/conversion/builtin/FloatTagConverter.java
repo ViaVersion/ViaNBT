@@ -13,7 +13,7 @@ public class FloatTagConverter implements TagConverter<FloatTag, Float> {
     }
 
     @Override
-    public FloatTag convert(String name, Float value) {
-        return new FloatTag(name, value);
+    public FloatTag convert(Float value) {
+        return new FloatTag(value);
     }
 }

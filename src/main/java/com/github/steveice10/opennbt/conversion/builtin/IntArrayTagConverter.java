@@ -13,7 +13,7 @@ public class IntArrayTagConverter implements TagConverter<IntArrayTag, int[]> {
     }
 
     @Override
-    public IntArrayTag convert(String name, int[] value) {
-        return new IntArrayTag(name, value);
+    public IntArrayTag convert(int[] value) {
+        return new IntArrayTag(value);
     }
 }

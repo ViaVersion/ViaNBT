@@ -7,30 +7,31 @@ import java.io.IOException;
 /**
  * A tag containing a byte.
  */
-public class ByteTag extends Tag {
+public class ByteTag extends NumberTag {
+    public static final int ID = 1;
     private byte value;
 
     /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name of the tag.
+     * Creates a tag.
      */
-    public ByteTag(String name) {
-        this(name, (byte) 0);
+    public ByteTag() {
+        this((byte) 0);
     }
 
     /**
-     * Creates a tag with the specified name.
+     * Creates a tag.
      *
-     * @param name  The name of the tag.
      * @param value The value of the tag.
      */
-    public ByteTag(String name, byte value) {
-        super(name);
+    public ByteTag(byte value) {
         this.value = value;
     }
 
+    /**
+     * @deprecated use {@link #asByte()}
+     */
     @Override
+    @Deprecated
     public Byte getValue() {
         return this.value;
     }
@@ -55,7 +56,55 @@ public class ByteTag extends Tag {
     }
 
     @Override
-    public ByteTag clone() {
-        return new ByteTag(this.getName(), this.getValue());
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ByteTag byteTag = (ByteTag) o;
+        return this.value == byteTag.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return value;
+    }
+
+    @Override
+    public final ByteTag clone() {
+        return new ByteTag(this.value);
+    }
+
+    @Override
+    public byte asByte() {
+        return this.value;
+    }
+
+    @Override
+    public short asShort() {
+        return this.value;
+    }
+
+    @Override
+    public int asInt() {
+        return this.value;
+    }
+
+    @Override
+    public long asLong() {
+        return this.value;
+    }
+
+    @Override
+    public float asFloat() {
+        return this.value;
+    }
+
+    @Override
+    public double asDouble() {
+        return this.value;
+    }
+
+    @Override
+    public int getTagId() {
+        return ID;
     }
 }

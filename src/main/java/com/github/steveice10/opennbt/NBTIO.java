@@ -1,6 +1,5 @@
 package com.github.steveice10.opennbt;
 
-import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
@@ -18,6 +17,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -152,7 +152,7 @@ public class NBTIO {
      * @return The read tag, or null if the tag is an end tag.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public static Tag readTag(InputStream in) throws IOException {
+    public static CompoundTag readTag(InputStream in) throws IOException {
         return readTag(in, false);
     }
 
@@ -164,7 +164,7 @@ public class NBTIO {
      * @return The read tag, or null if the tag is an end tag.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public static Tag readTag(InputStream in, boolean littleEndian) throws IOException {
+    public static CompoundTag readTag(InputStream in, boolean littleEndian) throws IOException {
         return readTag((DataInput) (littleEndian ? new LittleEndianDataInputStream(in) : new DataInputStream(in)));
     }
 
@@ -175,21 +175,16 @@ public class NBTIO {
      * @return The read tag, or null if the tag is an end tag.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public static Tag readTag(DataInput in) throws IOException {
-        int id = in.readUnsignedByte();
-        if(id == 0) {
-            return null;
+    public static CompoundTag readTag(DataInput in) throws IOException {
+        int id = in.readByte();
+        if(id != CompoundTag.ID) {
+            throw new IOException(String.format("Expected root tag to be a CompoundTag, was %s", id));
         }
 
-        String name = in.readUTF();
-        Tag tag;
+        // Empty name
+        in.skipBytes(in.readUnsignedShort());
 
-        try {
-            tag = TagRegistry.createInstance(id, name);
-        } catch(TagCreateException e) {
-            throw new IOException("Failed to create tag.", e);
-        }
-
+        CompoundTag tag = new CompoundTag();
         tag.read(in);
         return tag;
     }
@@ -201,7 +196,7 @@ public class NBTIO {
      * @param tag Tag to write.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public static void writeTag(OutputStream out, Tag tag) throws IOException {
+    public static void writeTag(OutputStream out, CompoundTag tag) throws IOException {
         writeTag(out, tag, false);
     }
 
@@ -213,7 +208,7 @@ public class NBTIO {
      * @param littleEndian Whether to write little endian NBT.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public static void writeTag(OutputStream out, Tag tag, boolean littleEndian) throws IOException {
+    public static void writeTag(OutputStream out, CompoundTag tag, boolean littleEndian) throws IOException {
         writeTag((DataOutput) (littleEndian ? new LittleEndianDataOutputStream(out) : new DataOutputStream(out)), tag);
     }
 
@@ -224,18 +219,15 @@ public class NBTIO {
      * @param tag Tag to write.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public static void writeTag(DataOutput out, Tag tag) throws IOException {
-        if(tag != null) {
-            out.writeByte(TagRegistry.getIdFor(tag.getClass()));
-            out.writeUTF(tag.getName());
-            tag.write(out);
-        } else {
-            out.writeByte(0);
-        }
+    public static void writeTag(DataOutput out, CompoundTag tag) throws IOException {
+        out.writeByte(CompoundTag.ID);
+        out.writeUTF(""); // Empty name
+        tag.write(out);
     }
 
-    private static class LittleEndianDataInputStream extends FilterInputStream implements DataInput {
-        public LittleEndianDataInputStream(InputStream in) {
+    private static final class LittleEndianDataInputStream extends FilterInputStream implements DataInput {
+
+        private LittleEndianDataInputStream(InputStream in) {
             super(in);
         }
 
@@ -394,12 +386,13 @@ public class NBTIO {
             byte[] bytes = new byte[this.readUnsignedShort()];
             this.readFully(bytes);
 
-            return new String(bytes, "UTF-8");
+            return new String(bytes, StandardCharsets.UTF_8);
         }
     }
 
-    private static class LittleEndianDataOutputStream extends FilterOutputStream implements DataOutput {
-        public LittleEndianDataOutputStream(OutputStream out) {
+    private static final class LittleEndianDataOutputStream extends FilterOutputStream implements DataOutput {
+
+        private LittleEndianDataOutputStream(OutputStream out) {
             super(out);
         }
 
@@ -490,7 +483,7 @@ public class NBTIO {
 
         @Override
         public void writeUTF(String s) throws IOException {
-            byte[] bytes = s.getBytes("UTF-8");
+            byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
 
             this.writeShort(bytes.length);
             this.write(bytes);

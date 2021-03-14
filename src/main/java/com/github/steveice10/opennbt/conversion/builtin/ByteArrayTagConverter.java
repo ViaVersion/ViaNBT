@@ -13,7 +13,7 @@ public class ByteArrayTagConverter implements TagConverter<ByteArrayTag, byte[]>
     }
 
     @Override
-    public ByteArrayTag convert(String name, byte[] value) {
-        return new ByteArrayTag(name, value);
+    public ByteArrayTag convert(byte[] value) {
+        return new ByteArrayTag(value);
     }
 }

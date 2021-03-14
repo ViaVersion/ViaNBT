@@ -13,7 +13,7 @@ public class StringTagConverter implements TagConverter<StringTag, String> {
     }
 
     @Override
-    public StringTag convert(String name, String value) {
-        return new StringTag(name, value);
+    public StringTag convert(String value) {
+        return new StringTag(value);
     }
 }

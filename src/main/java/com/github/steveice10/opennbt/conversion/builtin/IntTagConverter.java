@@ -13,7 +13,7 @@ public class IntTagConverter implements TagConverter<IntTag, Integer> {
     }
 
     @Override
-    public IntTag convert(String name, Integer value) {
-        return new IntTag(name, value);
+    public IntTag convert(Integer value) {
+        return new IntTag(value);
     }
 }

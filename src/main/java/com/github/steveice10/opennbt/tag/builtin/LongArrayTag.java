@@ -1,38 +1,39 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
+import com.google.common.base.Preconditions;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * A tag containing a long array.
  */
 public class LongArrayTag extends Tag {
+    public static final int ID = 12;
     private long[] value;
 
     /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name of the tag.
+     * Creates a tag.
      */
-    public LongArrayTag(String name) {
-        this(name, new long[0]);
+    public LongArrayTag() {
+        this(new long[0]);
     }
 
     /**
-     * Creates a tag with the specified name.
+     * Creates a tag.
      *
-     * @param name  The name of the tag.
      * @param value The value of the tag.
      */
-    public LongArrayTag(String name, long[] value) {
-        super(name);
+    public LongArrayTag(long[] value) {
+        Preconditions.checkNotNull(value);
         this.value = value;
     }
 
     @Override
     public long[] getValue() {
-        return this.value.clone();
+        return this.value;
     }
 
     /**
@@ -41,11 +42,8 @@ public class LongArrayTag extends Tag {
      * @param value New value of this tag.
      */
     public void setValue(long[] value) {
-        if(value == null) {
-            return;
-        }
-
-        this.value = value.clone();
+        Preconditions.checkNotNull(value);
+        this.value = value;
     }
 
     /**
@@ -88,13 +86,31 @@ public class LongArrayTag extends Tag {
     @Override
     public void write(DataOutput out) throws IOException {
         out.writeInt(this.value.length);
-        for(int index = 0; index < this.value.length; index++) {
-            out.writeLong(this.value[index]);
+        for (long l : this.value) {
+            out.writeLong(l);
         }
     }
 
     @Override
-    public LongArrayTag clone() {
-        return new LongArrayTag(this.getName(), this.getValue());
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LongArrayTag that = (LongArrayTag) o;
+        return Arrays.equals(this.value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(this.value);
+    }
+
+    @Override
+    public final LongArrayTag clone() {
+        return new LongArrayTag(this.value.clone());
+    }
+
+    @Override
+    public int getTagId() {
+        return ID;
     }
 }

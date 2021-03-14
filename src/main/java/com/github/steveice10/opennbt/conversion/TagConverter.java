@@ -20,9 +20,8 @@ public interface TagConverter<T extends Tag, V> {
     /**
      * Converts a value to a tag.
      *
-     * @param name  Name of the tag.
      * @param value Value to convert.
      * @return The converted tag.
      */
-    public T convert(String name, V value);
+    public T convert(V value);
 }

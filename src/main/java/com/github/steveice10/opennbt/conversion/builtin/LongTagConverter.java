@@ -13,7 +13,7 @@ public class LongTagConverter implements TagConverter<LongTag, Long> {
     }
 
     @Override
-    public LongTag convert(String name, Long value) {
-        return new LongTag(name, value);
+    public LongTag convert(Long value) {
+        return new LongTag(value);
     }
 }

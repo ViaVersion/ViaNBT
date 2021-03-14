@@ -13,7 +13,7 @@ public class ShortTagConverter implements TagConverter<ShortTag, Short> {
     }
 
     @Override
-    public ShortTag convert(String name, Short value) {
-        return new ShortTag(name, value);
+    public ShortTag convert(Short value) {
+        return new ShortTag(value);
     }
 }

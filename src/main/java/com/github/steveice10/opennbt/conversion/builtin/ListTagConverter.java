@@ -14,7 +14,7 @@ import java.util.List;
 public class ListTagConverter implements TagConverter<ListTag, List> {
     @Override
     public List convert(ListTag tag) {
-        List<Object> ret = new ArrayList<Object>();
+        List<Object> ret = new ArrayList<>();
         List<? extends Tag> tags = tag.getValue();
         for(Tag t : tags) {
             ret.add(ConverterRegistry.convertToValue(t));
@@ -24,12 +24,12 @@ public class ListTagConverter implements TagConverter<ListTag, List> {
     }
 
     @Override
-    public ListTag convert(String name, List value) {
-        List<Tag> tags = new ArrayList<Tag>();
+    public ListTag convert(List value) {
+        List<Tag> tags = new ArrayList<>();
         for(Object o : value) {
-            tags.add(ConverterRegistry.convertToTag("", o));
+            tags.add(ConverterRegistry.convertToTag(o));
         }
 
-        return new ListTag(name, tags);
+        return new ListTag(tags);
     }
 }

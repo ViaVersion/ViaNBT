@@ -13,7 +13,7 @@ public class DoubleTagConverter implements TagConverter<DoubleTag, Double> {
     }
 
     @Override
-    public DoubleTag convert(String name, Double value) {
-        return new DoubleTag(name, value);
+    public DoubleTag convert(Double value) {
+        return new DoubleTag(value);
     }
 }

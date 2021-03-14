@@ -1,16 +1,17 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
-import com.github.steveice10.opennbt.NBTIO;
+import com.github.steveice10.opennbt.tag.TagCreateException;
+import com.github.steveice10.opennbt.tag.TagRegistry;
+import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -18,32 +19,39 @@ import java.util.Set;
 /**
  * A compound tag containing other tags.
  */
-public class CompoundTag extends Tag implements Iterable<Tag> {
+public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
+    public static final int ID = 10;
     private Map<String, Tag> value;
 
     /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name of the tag.
+     * Creates a tag.
      */
-    public CompoundTag(String name) {
-        this(name, new LinkedHashMap<String, Tag>());
+    public CompoundTag() {
+        this(new LinkedHashMap<>());
     }
 
     /**
-     * Creates a tag with the specified name.
+     * Creates a tag.
      *
-     * @param name  The name of the tag.
      * @param value The value of the tag.
      */
-    public CompoundTag(String name, Map<String, Tag> value) {
-        super(name);
-        this.value = new LinkedHashMap<String, Tag>(value);
+    public CompoundTag(Map<String, Tag> value) {
+        this.value = new LinkedHashMap<>(value);
+    }
+
+    /**
+     * Creates a tag without wrapping the map.
+     *
+     * @param value The value of the tag.
+     */
+    public CompoundTag(LinkedHashMap<String, Tag> value) {
+        Preconditions.checkNotNull(value);
+        this.value = value;
     }
 
     @Override
     public Map<String, Tag> getValue() {
-        return new LinkedHashMap<String, Tag>(this.value);
+        return this.value;
     }
 
     /**
@@ -52,7 +60,18 @@ public class CompoundTag extends Tag implements Iterable<Tag> {
      * @param value New value of this tag.
      */
     public void setValue(Map<String, Tag> value) {
-        this.value = new LinkedHashMap<String, Tag>(value);
+        Preconditions.checkNotNull(value);
+        this.value = new LinkedHashMap<>(value);
+    }
+
+    /**
+     * Sets the value of this tag without wrapping the map.
+     *
+     * @param value New value of this tag.
+     */
+    public void setValue(LinkedHashMap<String, Tag> value) {
+        Preconditions.checkNotNull(value);
+        this.value = value;
     }
 
     /**
@@ -65,22 +84,23 @@ public class CompoundTag extends Tag implements Iterable<Tag> {
     }
 
     /**
-     * Checks whether the compound tag contains a tag with the specified name.
+     * Checks whether the compound tag contains a tag.
      *
      * @param tagName Name of the tag to check for.
-     * @return Whether the compound tag contains a tag with the specified name.
+     * @return Whether the compound tag contains a tag.
      */
     public boolean contains(String tagName) {
         return this.value.containsKey(tagName);
     }
 
     /**
-     * Gets the tag with the specified name.
+     * Gets the tag.
      *
      * @param <T>     Type of tag to get.
      * @param tagName Name of the tag.
-     * @return The tag with the specified name.
+     * @return The tag.
      */
+    @Nullable
     public <T extends Tag> T get(String tagName) {
         return (T) this.value.get(tagName);
     }
@@ -88,12 +108,14 @@ public class CompoundTag extends Tag implements Iterable<Tag> {
     /**
      * Puts the tag into this compound tag.
      *
-     * @param <T> Type of tag to put.
-     * @param tag Tag to put into this compound tag.
+     * @param <T>  Type of tag to put.
+     * @param tagName Name of the tag.
+     * @param tag  Tag to put into this compound tag.
      * @return The previous tag associated with its name, or null if there wasn't one.
      */
-    public <T extends Tag> T put(T tag) {
-        return (T) this.value.put(tag.getName(), tag);
+    @Nullable
+    public <T extends Tag> T put(String tagName, T tag) {
+        return (T) this.value.put(tagName, tag);
     }
 
     /**
@@ -103,6 +125,7 @@ public class CompoundTag extends Tag implements Iterable<Tag> {
      * @param tagName Name of the tag to remove.
      * @return The removed tag.
      */
+    @Nullable
     public <T extends Tag> T remove(String tagName) {
         return (T) this.value.remove(tagName);
     }
@@ -126,6 +149,15 @@ public class CompoundTag extends Tag implements Iterable<Tag> {
     }
 
     /**
+     * Gets the entry set of this compound tag.
+     *
+     * @return The compound tag's entry set.
+     */
+    public Set<Entry<String, Tag>> entrySet() {
+        return this.value.entrySet();
+    }
+
+    /**
      * Gets the number of tags in this compound tag.
      *
      * @return This compound tag's size.
@@ -142,43 +174,71 @@ public class CompoundTag extends Tag implements Iterable<Tag> {
     }
 
     @Override
-    public Iterator<Tag> iterator() {
-        return this.values().iterator();
+    public Iterator<Entry<String, Tag>> iterator() {
+        return this.value.entrySet().iterator();
     }
 
     @Override
     public void read(DataInput in) throws IOException {
-        List<Tag> tags = new ArrayList<Tag>();
         try {
-            Tag tag;
-            while((tag = NBTIO.readTag(in)) != null) {
-                tags.add(tag);
-            }
-        } catch(EOFException e) {
-            throw new IOException("Closing EndTag was not found!");
-        }
+            int id;
+            while (true) {
+                id = in.readByte();
+                if (id == 0) {
+                    // End tag
+                    break;
+                }
 
-        for(Tag tag : tags) {
-            this.put(tag);
+                String name = in.readUTF();
+                Tag tag = TagRegistry.createInstance(id);
+                tag.read(in);
+                this.value.put(name, tag);
+            }
+        } catch(TagCreateException e) {
+            throw new IOException("Failed to create tag.", e);
+        } catch(EOFException e) {
+            throw new IOException("Closing tag was not found!");
         }
     }
 
     @Override
     public void write(DataOutput out) throws IOException {
-        for(Tag tag : this.value.values()) {
-            NBTIO.writeTag(out, tag);
+        for(Entry<String, Tag> entry : this.value.entrySet()) {
+            Tag tag = entry.getValue();
+            out.writeByte(tag.getTagId());
+            out.writeUTF(entry.getKey());
+            tag.write(out);
         }
 
+        // End
         out.writeByte(0);
     }
 
     @Override
-    public CompoundTag clone() {
-        Map<String, Tag> newMap = new LinkedHashMap<String, Tag>();
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CompoundTag tags = (CompoundTag) o;
+        return this.value.equals(tags.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
+    public final CompoundTag clone() {
+        LinkedHashMap<String, Tag> newMap = new LinkedHashMap<>();
         for(Entry<String, Tag> entry : this.value.entrySet()) {
             newMap.put(entry.getKey(), entry.getValue().clone());
         }
 
-        return new CompoundTag(this.getName(), newMap);
+        return new CompoundTag(newMap);
+    }
+
+    @Override
+    public int getTagId() {
+        return ID;
     }
 }

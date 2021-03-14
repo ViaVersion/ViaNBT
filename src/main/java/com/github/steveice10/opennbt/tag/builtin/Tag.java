@@ -8,29 +8,9 @@ import java.lang.reflect.Array;
 /**
  * Represents an NBT tag.
  * <p>
- * All tags must have a constructor with a single string parameter for reading tags (can be any visibility).
  * Tags should also have setter methods specific to their value types.
  */
 public abstract class Tag implements Cloneable {
-    private String name;
-
-    /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name.
-     */
-    public Tag(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Gets the name of this tag.
-     *
-     * @return The name of this tag.
-     */
-    public final String getName() {
-        return this.name;
-    }
 
     /**
      * Gets the value of this tag.
@@ -55,49 +35,19 @@ public abstract class Tag implements Cloneable {
      */
     public abstract void write(DataOutput out) throws IOException;
 
+    /**
+     * Returns the NBT tag id of this tag type, used in I/O.
+     *
+     * @return Id of the tag this class represents
+     */
+    public abstract int getTagId();
+
     @Override
     public abstract Tag clone();
 
     @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof Tag)) {
-            return false;
-        }
-
-        Tag tag = (Tag) obj;
-        if(!this.getName().equals(tag.getName())) {
-            return false;
-        }
-
-        if(this.getValue() == null) {
-            return tag.getValue() == null;
-        } else if(tag.getValue() == null) {
-            return false;
-        }
-
-        if(this.getValue().getClass().isArray() && tag.getValue().getClass().isArray()) {
-            int length = Array.getLength(this.getValue());
-            if(Array.getLength(tag.getValue()) != length) {
-                return false;
-            }
-
-            for(int index = 0; index < length; index++) {
-                Object o = Array.get(this.getValue(), index);
-                Object other = Array.get(tag.getValue(), index);
-                if(o == null && other != null || o != null && !o.equals(other)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        return this.getValue().equals(tag.getValue());
-    }
-
-    @Override
     public String toString() {
-        String name = this.getName() != null && !this.getName().equals("") ? "(" + this.getName() + ")" : "";
+        //TODO cleanup/push down
         String value = "";
         if(this.getValue() != null) {
             value = this.getValue().toString();
@@ -117,6 +67,6 @@ public abstract class Tag implements Cloneable {
             }
         }
 
-        return this.getClass().getSimpleName() + name + " { " + value + " }";
+        return this.getClass().getSimpleName() + " { " + value + " }";
     }
 }

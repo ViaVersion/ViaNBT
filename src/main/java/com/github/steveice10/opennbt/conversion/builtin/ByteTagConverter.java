@@ -13,7 +13,7 @@ public class ByteTagConverter implements TagConverter<ByteTag, Byte> {
     }
 
     @Override
-    public ByteTag convert(String name, Byte value) {
-        return new ByteTag(name, value);
+    public ByteTag convert(Byte value) {
+        return new ByteTag(value);
     }
 }

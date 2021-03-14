@@ -3,36 +3,34 @@ package com.github.steveice10.opennbt.tag.builtin;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * A tag containing a byte array.
  */
 public class ByteArrayTag extends Tag {
+    public static final int ID = 7;
     private byte[] value;
 
     /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name of the tag.
+     * Creates a tag.
      */
-    public ByteArrayTag(String name) {
-        this(name, new byte[0]);
+    public ByteArrayTag() {
+        this(new byte[0]);
     }
 
     /**
-     * Creates a tag with the specified name.
+     * Creates a tag.
      *
-     * @param name  The name of the tag.
      * @param value The value of the tag.
      */
-    public ByteArrayTag(String name, byte[] value) {
-        super(name);
+    public ByteArrayTag(byte[] value) {
         this.value = value;
     }
 
     @Override
     public byte[] getValue() {
-        return this.value.clone();
+        return this.value;
     }
 
     /**
@@ -45,7 +43,7 @@ public class ByteArrayTag extends Tag {
             return;
         }
 
-        this.value = value.clone();
+        this.value = value;
     }
 
     /**
@@ -90,7 +88,25 @@ public class ByteArrayTag extends Tag {
     }
 
     @Override
-    public ByteArrayTag clone() {
-        return new ByteArrayTag(this.getName(), this.getValue());
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ByteArrayTag that = (ByteArrayTag) o;
+        return Arrays.equals(this.value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(this.value);
+    }
+
+    @Override
+    public final ByteArrayTag clone() {
+        return new ByteArrayTag(this.value);
+    }
+
+    @Override
+    public int getTagId() {
+        return ID;
     }
 }

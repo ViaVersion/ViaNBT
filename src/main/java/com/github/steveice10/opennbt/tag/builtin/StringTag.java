@@ -1,5 +1,7 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
+import com.google.common.base.Preconditions;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -8,25 +10,23 @@ import java.io.IOException;
  * A tag containing a string.
  */
 public class StringTag extends Tag {
+    public static final int ID = 8;
     private String value;
 
     /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name of the tag.
+     * Creates a tag.
      */
-    public StringTag(String name) {
-        this(name, "");
+    public StringTag() {
+        this("");
     }
 
     /**
-     * Creates a tag with the specified name.
+     * Creates a tag.
      *
-     * @param name  The name of the tag.
      * @param value The value of the tag.
      */
-    public StringTag(String name, String value) {
-        super(name);
+    public StringTag(String value) {
+        Preconditions.checkNotNull(value);
         this.value = value;
     }
 
@@ -41,6 +41,7 @@ public class StringTag extends Tag {
      * @param value New value of this tag.
      */
     public void setValue(String value) {
+        Preconditions.checkNotNull(value);
         this.value = value;
     }
 
@@ -55,7 +56,25 @@ public class StringTag extends Tag {
     }
 
     @Override
-    public StringTag clone() {
-        return new StringTag(this.getName(), this.getValue());
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StringTag stringTag = (StringTag) o;
+        return this.value.equals(stringTag.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.value.hashCode();
+    }
+
+    @Override
+    public final StringTag clone() {
+        return new StringTag(this.value);
+    }
+
+    @Override
+    public int getTagId() {
+        return ID;
     }
 }

@@ -1,38 +1,39 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
+import com.google.common.base.Preconditions;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * A tag containing an integer array.
  */
 public class IntArrayTag extends Tag {
+    public static final int ID = 11;
     private int[] value;
 
     /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name of the tag.
+     * Creates a tag.
      */
-    public IntArrayTag(String name) {
-        this(name, new int[0]);
+    public IntArrayTag() {
+        this(new int[0]);
     }
 
     /**
-     * Creates a tag with the specified name.
+     * Creates a tag.
      *
-     * @param name  The name of the tag.
      * @param value The value of the tag.
      */
-    public IntArrayTag(String name, int[] value) {
-        super(name);
+    public IntArrayTag(int[] value) {
+        Preconditions.checkNotNull(value);
         this.value = value;
     }
 
     @Override
     public int[] getValue() {
-        return this.value.clone();
+        return this.value;
     }
 
     /**
@@ -41,11 +42,8 @@ public class IntArrayTag extends Tag {
      * @param value New value of this tag.
      */
     public void setValue(int[] value) {
-        if(value == null) {
-            return;
-        }
-
-        this.value = value.clone();
+        Preconditions.checkNotNull(value);
+        this.value = value;
     }
 
     /**
@@ -88,13 +86,31 @@ public class IntArrayTag extends Tag {
     @Override
     public void write(DataOutput out) throws IOException {
         out.writeInt(this.value.length);
-        for(int index = 0; index < this.value.length; index++) {
-            out.writeInt(this.value[index]);
+        for (int i : this.value) {
+            out.writeInt(i);
         }
     }
 
     @Override
-    public IntArrayTag clone() {
-        return new IntArrayTag(this.getName(), this.getValue());
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IntArrayTag that = (IntArrayTag) o;
+        return Arrays.equals(this.value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(this.value);
+    }
+
+    @Override
+    public final IntArrayTag clone() {
+        return new IntArrayTag(this.value.clone());
+    }
+
+    @Override
+    public int getTagId() {
+        return ID;
     }
 }

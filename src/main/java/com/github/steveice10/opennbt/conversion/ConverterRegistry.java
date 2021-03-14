@@ -1,9 +1,6 @@
 package com.github.steveice10.opennbt.conversion;
 
 import com.github.steveice10.opennbt.conversion.builtin.*;
-import com.github.steveice10.opennbt.conversion.builtin.custom.DoubleArrayTagConverter;
-import com.github.steveice10.opennbt.conversion.builtin.custom.FloatArrayTagConverter;
-import com.github.steveice10.opennbt.conversion.builtin.custom.ShortArrayTagConverter;
 import com.github.steveice10.opennbt.tag.builtin.ByteArrayTag;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
@@ -16,10 +13,7 @@ import com.github.steveice10.opennbt.tag.builtin.LongTag;
 import com.github.steveice10.opennbt.tag.builtin.ShortTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
-import com.github.steveice10.opennbt.tag.builtin.custom.DoubleArrayTag;
-import com.github.steveice10.opennbt.tag.builtin.custom.FloatArrayTag;
 import com.github.steveice10.opennbt.tag.builtin.LongArrayTag;
-import com.github.steveice10.opennbt.tag.builtin.custom.ShortArrayTag;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -49,10 +43,6 @@ public class ConverterRegistry {
         register(CompoundTag.class, Map.class, new CompoundTagConverter());
         register(IntArrayTag.class, int[].class, new IntArrayTagConverter());
         register(LongArrayTag.class, long[].class, new LongArrayTagConverter());
-
-        register(DoubleArrayTag.class, double[].class, new DoubleArrayTagConverter());
-        register(FloatArrayTag.class, float[].class, new FloatArrayTagConverter());
-        register(ShortArrayTag.class, short[].class, new ShortArrayTagConverter());
     }
 
     /**
@@ -118,12 +108,11 @@ public class ConverterRegistry {
      *
      * @param <V>   Value type to convert from.
      * @param <T>   Tag type to convert to.
-     * @param name  Name of the resulting tag.
      * @param value Value to convert.
      * @return The converted tag.
      * @throws ConversionException If a suitable converter could not be found.
      */
-    public static <V, T extends Tag> T convertToTag(String name, V value) throws ConversionException {
+    public static <V, T extends Tag> T convertToTag(V value) throws ConversionException {
         if(value == null) {
             return null;
         }
@@ -145,7 +134,7 @@ public class ConverterRegistry {
             throw new ConversionException("Value type " + value.getClass().getName() + " has no converter.");
         }
 
-        return converter.convert(name, value);
+        return converter.convert(value);
     }
 
     private static Set<Class<?>> getAllClasses(Class<?> clazz) {

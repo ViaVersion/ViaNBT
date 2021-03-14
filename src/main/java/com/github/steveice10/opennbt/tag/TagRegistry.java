@@ -8,43 +8,43 @@ import com.github.steveice10.opennbt.tag.builtin.FloatTag;
 import com.github.steveice10.opennbt.tag.builtin.IntArrayTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.LongArrayTag;
 import com.github.steveice10.opennbt.tag.builtin.LongTag;
 import com.github.steveice10.opennbt.tag.builtin.ShortTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
-import com.github.steveice10.opennbt.tag.builtin.custom.DoubleArrayTag;
-import com.github.steveice10.opennbt.tag.builtin.custom.FloatArrayTag;
-import com.github.steveice10.opennbt.tag.builtin.LongArrayTag;
-import com.github.steveice10.opennbt.tag.builtin.custom.ShortArrayTag;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Supplier;
+
 
 /**
  * A registry containing different tag classes.
  */
 public class TagRegistry {
-    private static final Map<Integer, Class<? extends Tag>> idToTag = new HashMap<Integer, Class<? extends Tag>>();
-    private static final Map<Class<? extends Tag>, Integer> tagToId = new HashMap<Class<? extends Tag>, Integer>();
+    private static final Int2ObjectMap<Class<? extends Tag>> idToTag = new Int2ObjectOpenHashMap<>();
+    private static final Object2IntMap<Class<? extends Tag>> tagToId = new Object2IntOpenHashMap<>();
+    private static final Int2ObjectMap<Supplier<? extends Tag>> instanceSuppliers = new Int2ObjectOpenHashMap<>();
 
     static {
-        register(1, ByteTag.class);
-        register(2, ShortTag.class);
-        register(3, IntTag.class);
-        register(4, LongTag.class);
-        register(5, FloatTag.class);
-        register(6, DoubleTag.class);
-        register(7, ByteArrayTag.class);
-        register(8, StringTag.class);
-        register(9, ListTag.class);
-        register(10, CompoundTag.class);
-        register(11, IntArrayTag.class);
-        register(12, LongArrayTag.class);
+        tagToId.defaultReturnValue(-1);
 
-        register(60, DoubleArrayTag.class);
-        register(61, FloatArrayTag.class);
-        register(65, ShortArrayTag.class);
+        register(ByteTag.ID, ByteTag.class, ByteTag::new);
+        register(ShortTag.ID, ShortTag.class, ShortTag::new);
+        register(IntTag.ID, IntTag.class, IntTag::new);
+        register(LongTag.ID, LongTag.class, LongTag::new);
+        register(FloatTag.ID, FloatTag.class, FloatTag::new);
+        register(DoubleTag.ID, DoubleTag.class, DoubleTag::new);
+        register(ByteArrayTag.ID, ByteArrayTag.class, ByteArrayTag::new);
+        register(StringTag.ID, StringTag.class, StringTag::new);
+        register(ListTag.ID, ListTag.class, ListTag::new);
+        register(CompoundTag.ID, CompoundTag.class, CompoundTag::new);
+        register(IntArrayTag.ID, IntArrayTag.class, IntArrayTag::new);
+        register(LongArrayTag.ID, LongArrayTag.class, LongArrayTag::new);
     }
 
     /**
@@ -54,7 +54,7 @@ public class TagRegistry {
      * @param tag Tag class to register.
      * @throws TagRegisterException If an error occurs while registering the tag.
      */
-    public static void register(int id, Class<? extends Tag> tag) throws TagRegisterException {
+    public static void register(int id, Class<? extends Tag> tag, Supplier<? extends Tag> supplier) throws TagRegisterException {
         if(idToTag.containsKey(id)) {
             throw new TagRegisterException("Tag ID \"" + id + "\" is already in use.");
         }
@@ -63,6 +63,7 @@ public class TagRegistry {
             throw new TagRegisterException("Tag \"" + tag.getSimpleName() + "\" is already registered.");
         }
 
+        instanceSuppliers.put(id, supplier);
         idToTag.put(id, tag);
         tagToId.put(tag, id);
     }
@@ -73,7 +74,7 @@ public class TagRegistry {
      * @param id  ID of the tag to unregister.
      */
     public static void unregister(int id) {
-        tagToId.remove(getClassFor(id));
+        tagToId.removeInt(getClassFor(id));
         idToTag.remove(id);
     }
 
@@ -83,11 +84,8 @@ public class TagRegistry {
      * @param id Id of the tag.
      * @return The tag class with the given id, or null if it cannot be found.
      */
+    @Nullable
     public static Class<? extends Tag> getClassFor(int id) {
-        if(!idToTag.containsKey(id)) {
-            return null;
-        }
-
         return idToTag.get(id);
     }
 
@@ -98,33 +96,22 @@ public class TagRegistry {
      * @return The id of the given tag class, or -1 if it cannot be found.
      */
     public static int getIdFor(Class<? extends Tag> clazz) {
-        if(!tagToId.containsKey(clazz)) {
-            return -1;
-        }
-
-        return tagToId.get(clazz);
+        return tagToId.getInt(clazz);
     }
 
     /**
      * Creates an instance of the tag with the given id, using the String constructor.
      *
-     * @param id      Id of the tag.
-     * @param tagName Name to give the tag.
+     * @param id Id of the tag.
      * @return The created tag.
      * @throws TagCreateException If an error occurs while creating the tag.
      */
-    public static Tag createInstance(int id, String tagName) throws TagCreateException {
-        Class<? extends Tag> clazz = idToTag.get(id);
-        if(clazz == null) {
+    public static Tag createInstance(int id) throws TagCreateException {
+        Supplier<? extends Tag> supplier = instanceSuppliers.get(id);
+        if(supplier == null) {
             throw new TagCreateException("Could not find tag with ID \"" + id + "\".");
         }
 
-        try {
-            Constructor<? extends Tag> constructor = clazz.getDeclaredConstructor(String.class);
-            constructor.setAccessible(true);
-            return constructor.newInstance(tagName);
-        } catch(Exception e) {
-            throw new TagCreateException("Failed to create instance of tag \"" + clazz.getSimpleName() + "\".", e);
-        }
+        return supplier.get();
     }
 }

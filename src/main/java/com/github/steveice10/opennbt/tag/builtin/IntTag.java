@@ -7,30 +7,31 @@ import java.io.IOException;
 /**
  * A tag containing an integer.
  */
-public class IntTag extends Tag {
+public class IntTag extends NumberTag {
+    public static final int ID = 3;
     private int value;
 
     /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name of the tag.
+     * Creates a tag.
      */
-    public IntTag(String name) {
-        this(name, 0);
+    public IntTag() {
+        this(0);
     }
 
     /**
-     * Creates a tag with the specified name.
+     * Creates a tag.
      *
-     * @param name  The name of the tag.
      * @param value The value of the tag.
      */
-    public IntTag(String name, int value) {
-        super(name);
+    public IntTag(int value) {
         this.value = value;
     }
 
+    /**
+     * @deprecated use {@link #asInt()}
+     */
     @Override
+    @Deprecated
     public Integer getValue() {
         return this.value;
     }
@@ -55,7 +56,55 @@ public class IntTag extends Tag {
     }
 
     @Override
-    public IntTag clone() {
-        return new IntTag(this.getName(), this.getValue());
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IntTag intTag = (IntTag) o;
+        return this.value == intTag.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.value;
+    }
+
+    @Override
+    public final IntTag clone() {
+        return new IntTag(this.value);
+    }
+
+    @Override
+    public byte asByte() {
+        return (byte) this.value;
+    }
+
+    @Override
+    public short asShort() {
+        return (short) this.value;
+    }
+
+    @Override
+    public int asInt() {
+        return this.value;
+    }
+
+    @Override
+    public long asLong() {
+        return this.value;
+    }
+
+    @Override
+    public float asFloat() {
+        return this.value;
+    }
+
+    @Override
+    public double asDouble() {
+        return this.value;
+    }
+
+    @Override
+    public int getTagId() {
+        return ID;
     }
 }

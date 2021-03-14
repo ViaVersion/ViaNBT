@@ -7,30 +7,31 @@ import java.io.IOException;
 /**
  * A tag containing a float.
  */
-public class FloatTag extends Tag {
+public class FloatTag extends NumberTag {
+    public static final int ID = 5;
     private float value;
 
     /**
-     * Creates a tag with the specified name.
-     *
-     * @param name The name of the tag.
+     * Creates a tag.
      */
-    public FloatTag(String name) {
-        this(name, 0);
+    public FloatTag() {
+        this(0);
     }
 
     /**
-     * Creates a tag with the specified name.
+     * Creates a tag.
      *
-     * @param name  The name of the tag.
      * @param value The value of the tag.
      */
-    public FloatTag(String name, float value) {
-        super(name);
+    public FloatTag(float value) {
         this.value = value;
     }
 
+    /**
+     * @deprecated use {@link #asFloat()}
+     */
     @Override
+    @Deprecated
     public Float getValue() {
         return this.value;
     }
@@ -55,7 +56,55 @@ public class FloatTag extends Tag {
     }
 
     @Override
-    public FloatTag clone() {
-        return new FloatTag(this.getName(), this.getValue());
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FloatTag floatTag = (FloatTag) o;
+        return this.value == floatTag.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Float.hashCode(this.value);
+    }
+
+    @Override
+    public final FloatTag clone() {
+        return new FloatTag(this.value);
+    }
+
+    @Override
+    public byte asByte() {
+        return (byte) this.value;
+    }
+
+    @Override
+    public short asShort() {
+        return (short) this.value;
+    }
+
+    @Override
+    public int asInt() {
+        return (int) this.value;
+    }
+
+    @Override
+    public long asLong() {
+        return (long) this.value;
+    }
+
+    @Override
+    public float asFloat() {
+        return this.value;
+    }
+
+    @Override
+    public double asDouble() {
+        return this.value;
+    }
+
+    @Override
+    public int getTagId() {
+        return ID;
     }
 }
