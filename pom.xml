@@ -12,6 +12,13 @@
     <description>A library for reading and writing NBT files, written in Java.</description>
     <url>https://github.com/Steveice10/OpenNBT/</url>
 
+    <distributionManagement>
+        <repository>
+            <id>viaversion</id>
+            <url>https://repo.viaversion.com</url>
+        </repository>
+    </distributionManagement>
+
     <scm>
         <connection>scm:git:git@github.com:Steveice10/OpenNBT.git</connection>
         <developerConnection>scm:git:git@github.com:Steveice10/OpenNBT.git</developerConnection>
