@@ -12,13 +12,14 @@ import java.util.Arrays;
  */
 public class LongArrayTag extends Tag {
     public static final int ID = 12;
+    private static final long[] EMPTY_ARRAY = new long[0];
     private long[] value;
 
     /**
      * Creates a tag.
      */
     public LongArrayTag() {
-        this(new long[0]);
+        this(EMPTY_ARRAY);
     }
 
     /**

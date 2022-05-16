@@ -1,8 +1,6 @@
 package com.github.steveice10.opennbt;
 
-import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.Tag;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -75,12 +73,12 @@ public class NBTIO {
             in = new GZIPInputStream(in);
         }
 
-        Tag tag = readTag(in, littleEndian);
+        CompoundTag tag = readTag(in, littleEndian);
         if(!(tag instanceof CompoundTag)) {
             throw new IOException("Root tag is not a CompoundTag!");
         }
 
-        return (CompoundTag) tag;
+        return tag;
     }
 
     /**

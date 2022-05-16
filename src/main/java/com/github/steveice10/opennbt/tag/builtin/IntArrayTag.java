@@ -12,13 +12,14 @@ import java.util.Arrays;
  */
 public class IntArrayTag extends Tag {
     public static final int ID = 11;
+    private static final int[] EMPTY_ARRAY = new int[0];
     private int[] value;
 
     /**
      * Creates a tag.
      */
     public IntArrayTag() {
-        this(new int[0]);
+        this(EMPTY_ARRAY);
     }
 
     /**

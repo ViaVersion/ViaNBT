@@ -196,7 +196,7 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
             }
         } catch(TagCreateException e) {
             throw new IOException("Failed to create tag.", e);
-        } catch(EOFException e) {
+        } catch(EOFException ignored) {
             throw new IOException("Closing tag was not found!");
         }
     }

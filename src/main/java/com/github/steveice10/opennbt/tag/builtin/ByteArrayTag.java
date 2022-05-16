@@ -10,13 +10,14 @@ import java.util.Arrays;
  */
 public class ByteArrayTag extends Tag {
     public static final int ID = 7;
+    private static final byte[] EMPTY_ARRAY = new byte[0];
     private byte[] value;
 
     /**
      * Creates a tag.
      */
     public ByteArrayTag() {
-        this(new byte[0]);
+        this(EMPTY_ARRAY);
     }
 
     /**

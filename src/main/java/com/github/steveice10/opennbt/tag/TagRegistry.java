@@ -13,22 +13,20 @@ import com.github.steveice10.opennbt.tag.builtin.LongTag;
 import com.github.steveice10.opennbt.tag.builtin.ShortTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-
 /**
  * A registry containing different tag classes.
  */
-public class TagRegistry {
-    private static final Int2ObjectMap<Class<? extends Tag>> idToTag = new Int2ObjectOpenHashMap<>();
+public final class TagRegistry {
+    private static final int HIGHEST_ID = LongArrayTag.ID;
+    private static final Class<? extends Tag>[] idToTag = new Class[HIGHEST_ID + 1];
+    private static final Supplier<? extends Tag>[] instanceSuppliers = new Supplier[HIGHEST_ID + 1];
     private static final Object2IntMap<Class<? extends Tag>> tagToId = new Object2IntOpenHashMap<>();
-    private static final Int2ObjectMap<Supplier<? extends Tag>> instanceSuppliers = new Int2ObjectOpenHashMap<>();
 
     static {
         tagToId.defaultReturnValue(-1);
@@ -55,16 +53,18 @@ public class TagRegistry {
      * @throws TagRegisterException If an error occurs while registering the tag.
      */
     public static void register(int id, Class<? extends Tag> tag, Supplier<? extends Tag> supplier) throws TagRegisterException {
-        if(idToTag.containsKey(id)) {
+        if(id < 0 || id > HIGHEST_ID) {
+            throw new TagRegisterException("Tag ID must be between 0 and " + HIGHEST_ID);
+        }
+        if(idToTag[id] != null) {
             throw new TagRegisterException("Tag ID \"" + id + "\" is already in use.");
         }
-
         if(tagToId.containsKey(tag)) {
             throw new TagRegisterException("Tag \"" + tag.getSimpleName() + "\" is already registered.");
         }
 
-        instanceSuppliers.put(id, supplier);
-        idToTag.put(id, tag);
+        instanceSuppliers[id] = supplier;
+        idToTag[id] = tag;
         tagToId.put(tag, id);
     }
 
@@ -75,7 +75,8 @@ public class TagRegistry {
      */
     public static void unregister(int id) {
         tagToId.removeInt(getClassFor(id));
-        idToTag.remove(id);
+        idToTag[id] = null;
+        instanceSuppliers[id] = null;
     }
 
     /**
@@ -86,7 +87,7 @@ public class TagRegistry {
      */
     @Nullable
     public static Class<? extends Tag> getClassFor(int id) {
-        return idToTag.get(id);
+        return id >= 0 && id < idToTag.length ? idToTag[id] : null;
     }
 
     /**
@@ -107,7 +108,7 @@ public class TagRegistry {
      * @throws TagCreateException If an error occurs while creating the tag.
      */
     public static Tag createInstance(int id) throws TagCreateException {
-        Supplier<? extends Tag> supplier = instanceSuppliers.get(id);
+        Supplier<? extends Tag> supplier = id > 0 && id < instanceSuppliers.length ? instanceSuppliers[id] : null;
         if(supplier == null) {
             throw new TagCreateException("Could not find tag with ID \"" + id + "\".");
         }
