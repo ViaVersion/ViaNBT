@@ -1,5 +1,6 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
+import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -25,7 +26,30 @@ public abstract class Tag implements Cloneable {
      * @param in Stream to write to.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public abstract void read(DataInput in) throws IOException;
+    public final void read(DataInput in) throws IOException {
+        this.read(in, TagLimiter.noop(), 0);
+    }
+
+    /**
+     * Reads this tag from an input stream.
+     *
+     * @param in Stream to write to.
+     * @param tagLimiter taglimiter
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public final void read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        this.read(in, tagLimiter, 0);
+    }
+
+    /**
+     * Reads this tag from an input stream.
+     *
+     * @param in Stream to write to.
+     * @param tagLimiter taglimiter
+     * @param nestingLevel current level of nesting
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public abstract void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException;
 
     /**
      * Writes this tag to an output stream.

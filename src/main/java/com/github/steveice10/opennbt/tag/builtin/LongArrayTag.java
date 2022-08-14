@@ -1,5 +1,6 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
+import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import com.google.common.base.Preconditions;
 
 import java.io.DataInput;
@@ -77,8 +78,10 @@ public class LongArrayTag extends Tag {
     }
 
     @Override
-    public void read(DataInput in) throws IOException {
+    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
+        tagLimiter.countInt();
         this.value = new long[in.readInt()];
+        tagLimiter.countBytes(8 * this.value.length);
         for(int index = 0; index < this.value.length; index++) {
             this.value[index] = in.readLong();
         }

@@ -1,5 +1,7 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
+import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -46,7 +48,8 @@ public class LongTag extends NumberTag {
     }
 
     @Override
-    public void read(DataInput in) throws IOException {
+    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
+        tagLimiter.countLong();
         this.value = in.readLong();
     }
 

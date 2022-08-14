@@ -2,6 +2,7 @@ package com.github.steveice10.opennbt.tag.builtin;
 
 import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
+import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,9 +139,11 @@ public class ListTag extends Tag implements Iterable<Tag> {
     }
 
     @Override
-    public void read(DataInput in) throws IOException {
+    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
         this.type = null;
 
+        tagLimiter.checkLevel(nestingLevel);
+        tagLimiter.countBytes(1 + 4);
         int id = in.readByte();
         if(id != 0) {
             this.type = TagRegistry.getClassFor(id);
@@ -150,6 +153,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
         }
 
         int count = in.readInt();
+        int newNestingLevel = nestingLevel + 1;
         for(int index = 0; index < count; index++) {
             Tag tag;
             try {
@@ -158,7 +162,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
                 throw new IOException("Failed to create tag.", e);
             }
 
-            tag.read(in);
+            tag.read(in, tagLimiter, newNestingLevel);
             this.add(tag);
         }
     }

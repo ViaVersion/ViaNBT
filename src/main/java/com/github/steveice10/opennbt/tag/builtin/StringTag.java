@@ -1,5 +1,6 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
+import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import com.google.common.base.Preconditions;
 
 import java.io.DataInput;
@@ -46,8 +47,9 @@ public class StringTag extends Tag {
     }
 
     @Override
-    public void read(DataInput in) throws IOException {
+    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
         this.value = in.readUTF();
+        tagLimiter.countBytes(2 * value.length()); // More or less, ignoring the length reading
     }
 
     @Override

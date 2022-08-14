@@ -2,6 +2,7 @@ package com.github.steveice10.opennbt.tag.builtin;
 
 import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
+import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,10 +180,13 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
     }
 
     @Override
-    public void read(DataInput in) throws IOException {
+    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
         try {
+            tagLimiter.checkLevel(nestingLevel);
+            int newNestingLevel = nestingLevel + 1;
             int id;
             while (true) {
+                tagLimiter.countByte();
                 id = in.readByte();
                 if (id == 0) {
                     // End tag
@@ -190,8 +194,10 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
                 }
 
                 String name = in.readUTF();
+                tagLimiter.countBytes(2 * name.length());
+
                 Tag tag = TagRegistry.createInstance(id);
-                tag.read(in);
+                tag.read(in, tagLimiter, newNestingLevel);
                 this.value.put(name, tag);
             }
         } catch(TagCreateException e) {

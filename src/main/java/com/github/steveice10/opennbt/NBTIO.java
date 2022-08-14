@@ -1,6 +1,7 @@
 package com.github.steveice10.opennbt;
 
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -151,7 +152,18 @@ public class NBTIO {
      * @throws java.io.IOException If an I/O error occurs.
      */
     public static CompoundTag readTag(InputStream in) throws IOException {
-        return readTag(in, false);
+        return readTag(in, TagLimiter.noop());
+    }
+
+    /**
+     * Reads a big endian NBT tag.
+     *
+     * @param in Input stream to read from.
+     * @return The read tag, or null if the tag is an end tag.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public static CompoundTag readTag(InputStream in, TagLimiter tagLimiter) throws IOException {
+        return readTag((DataInput) new DataInputStream(in), tagLimiter);
     }
 
     /**
@@ -174,6 +186,18 @@ public class NBTIO {
      * @throws java.io.IOException If an I/O error occurs.
      */
     public static CompoundTag readTag(DataInput in) throws IOException {
+        return readTag(in, TagLimiter.noop());
+    }
+
+    /**
+     * Reads an NBT tag.
+     *
+     * @param in Data input to read from.
+     * @param tagLimiter taglimiter
+     * @return The read tag, or null if the tag is an end tag.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public static CompoundTag readTag(DataInput in, TagLimiter tagLimiter) throws IOException {
         int id = in.readByte();
         if(id != CompoundTag.ID) {
             throw new IOException(String.format("Expected root tag to be a CompoundTag, was %s", id));
@@ -183,7 +207,7 @@ public class NBTIO {
         in.skipBytes(in.readUnsignedShort());
 
         CompoundTag tag = new CompoundTag();
-        tag.read(in);
+        tag.read(in, tagLimiter);
         return tag;
     }
 
