@@ -3,7 +3,6 @@ package com.github.steveice10.opennbt.tag.builtin;
 import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
-import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
@@ -63,7 +62,9 @@ public class ListTag extends Tag implements Iterable<Tag> {
      * @throws IllegalArgumentException If all tags in the list are not of the same type.
      */
     public void setValue(List<Tag> value) throws IllegalArgumentException {
-        Preconditions.checkNotNull(value);
+        if (value == null) {
+            throw new NullPointerException("value cannot be null");
+        }
 
         this.type = null;
         this.value.clear();
@@ -91,7 +92,9 @@ public class ListTag extends Tag implements Iterable<Tag> {
      * @throws IllegalArgumentException If the tag's type differs from the list tag's type.
      */
     public boolean add(Tag tag) throws IllegalArgumentException {
-        Preconditions.checkNotNull(tag);
+        if (tag == null) {
+            throw new NullPointerException("tag cannot be null");
+        }
 
         // If empty list, use this as tag type.
         if(this.type == null) {

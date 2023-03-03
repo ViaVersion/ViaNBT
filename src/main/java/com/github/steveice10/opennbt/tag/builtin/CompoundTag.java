@@ -3,7 +3,6 @@ package com.github.steveice10.opennbt.tag.builtin;
 import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
-import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
@@ -46,7 +45,9 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
      * @param value The value of the tag.
      */
     public CompoundTag(LinkedHashMap<String, Tag> value) {
-        Preconditions.checkNotNull(value);
+        if (value == null) {
+            throw new NullPointerException("value cannot be null");
+        }
         this.value = value;
     }
 
@@ -61,7 +62,9 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
      * @param value New value of this tag.
      */
     public void setValue(Map<String, Tag> value) {
-        Preconditions.checkNotNull(value);
+        if (value == null) {
+            throw new NullPointerException("value cannot be null");
+        }
         this.value = new LinkedHashMap<>(value);
     }
 
@@ -71,7 +74,9 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
      * @param value New value of this tag.
      */
     public void setValue(LinkedHashMap<String, Tag> value) {
-        Preconditions.checkNotNull(value);
+        if (value == null) {
+            throw new NullPointerException("value cannot be null");
+        }
         this.value = value;
     }
 

@@ -1,7 +1,6 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
-import com.google.common.base.Preconditions;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -29,7 +28,9 @@ public class LongArrayTag extends Tag {
      * @param value The value of the tag.
      */
     public LongArrayTag(long[] value) {
-        Preconditions.checkNotNull(value);
+        if (value == null) {
+            throw new NullPointerException("value cannot be null");
+        }
         this.value = value;
     }
 
@@ -44,7 +45,9 @@ public class LongArrayTag extends Tag {
      * @param value New value of this tag.
      */
     public void setValue(long[] value) {
-        Preconditions.checkNotNull(value);
+        if (value == null) {
+            throw new NullPointerException("value cannot be null");
+        }
         this.value = value;
     }
 
