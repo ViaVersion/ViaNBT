@@ -9,21 +9,21 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
  * A class containing methods for reading/writing NBT tags.
  */
-public class NBTIO {
+public final class NBTIO {
+
     /**
      * Reads the compressed, big endian root CompoundTag from the given file.
      *
@@ -69,7 +69,7 @@ public class NBTIO {
      * @throws java.io.IOException If an I/O error occurs.
      */
     public static CompoundTag readFile(File file, boolean compressed, boolean littleEndian) throws IOException {
-        InputStream in = new FileInputStream(file);
+        InputStream in = Files.newInputStream(file.toPath());
         try {
             if (compressed) {
                 in = new GZIPInputStream(in);
@@ -139,7 +139,7 @@ public class NBTIO {
             file.createNewFile();
         }
 
-        OutputStream out = new FileOutputStream(file);
+        OutputStream out = Files.newOutputStream(file.toPath());
         try {
             if (compressed) {
                 out = new GZIPOutputStream(out);
