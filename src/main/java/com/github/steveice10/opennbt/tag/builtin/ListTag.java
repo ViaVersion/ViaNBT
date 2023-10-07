@@ -100,7 +100,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
         if(this.type == null) {
             this.type = tag.getClass();
         } else if(tag.getClass() != this.type) {
-            throw new IllegalArgumentException("Tag type cannot differ from ListTag type.");
+            throw new IllegalArgumentException("Tag type " + tag.getClass().getSimpleName() + " differs from list type " + this.type.getSimpleName());
         }
 
         return this.value.add(tag);
