@@ -15,7 +15,7 @@ public interface TagConverter<T extends Tag, V> {
      * @param tag Tag to convert.
      * @return The converted value.
      */
-    public V convert(T tag);
+    V convert(T tag);
 
     /**
      * Converts a value to a tag.
@@ -23,5 +23,5 @@ public interface TagConverter<T extends Tag, V> {
      * @param value Value to convert.
      * @return The converted tag.
      */
-    public T convert(V value);
+    T convert(V value);
 }

@@ -1,10 +1,10 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
+import com.github.steveice10.opennbt.stringified.SNBT;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.lang.reflect.Array;
 
 /**
  * Represents an NBT tag.
@@ -19,6 +19,16 @@ public abstract class Tag implements Cloneable {
      * @return The value of this tag.
      */
     public abstract Object getValue();
+
+    /**
+     * Returns the unchecked value of this tag.
+     *
+     * @return unchecked value of this tag
+     * @param <T> expected type
+     */
+    public <T> T value() {
+        return (T) getValue();
+    }
 
     /**
      * Reads this tag from an input stream.
@@ -71,26 +81,6 @@ public abstract class Tag implements Cloneable {
 
     @Override
     public String toString() {
-        //TODO cleanup/push down
-        String value = "";
-        if (this.getValue() != null) {
-            value = this.getValue().toString();
-            if (this.getValue().getClass().isArray()) {
-                StringBuilder build = new StringBuilder();
-                build.append("[");
-                for (int index = 0; index < Array.getLength(this.getValue()); index++) {
-                    if (index > 0) {
-                        build.append(", ");
-                    }
-
-                    build.append(Array.get(this.getValue(), index));
-                }
-
-                build.append("]");
-                value = build.toString();
-            }
-        }
-
-        return this.getClass().getSimpleName() + " { " + value + " }";
+        return SNBT.serialize(this);
     }
 }

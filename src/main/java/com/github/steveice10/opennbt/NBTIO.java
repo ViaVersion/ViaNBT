@@ -74,12 +74,7 @@ public final class NBTIO {
                 in = new GZIPInputStream(in);
             }
 
-            CompoundTag tag = readTag(in, littleEndian);
-            if (!(tag instanceof CompoundTag)) {
-                throw new IOException("Root tag is not a CompoundTag!");
-            }
-
-            return tag;
+            return readTag(in, littleEndian);
         } finally {
             in.close();
         }
@@ -131,7 +126,7 @@ public final class NBTIO {
      */
     public static void writeFile(CompoundTag tag, File file, boolean compressed, boolean littleEndian) throws IOException {
         if (!file.exists()) {
-            if (file.getParentFile() != null && !file.getParentFile().exists()) {
+            if (file.getParentFile() != null) {
                 file.getParentFile().mkdirs();
             }
 

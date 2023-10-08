@@ -1,6 +1,5 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
-import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import java.io.DataInput;
@@ -160,7 +159,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
             Tag tag;
             try {
                 tag = TagRegistry.createInstance(id);
-            } catch (TagCreateException e) {
+            } catch (IllegalArgumentException e) {
                 throw new IOException("Failed to create tag.", e);
             }
 

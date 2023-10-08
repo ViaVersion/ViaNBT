@@ -23,12 +23,11 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class TagRegistry {
     private static final int HIGHEST_ID = LongArrayTag.ID;
-    private static final Class<? extends Tag>[] idToTag = new Class[HIGHEST_ID + 1];
-    private static final Supplier<? extends Tag>[] instanceSuppliers = new Supplier[HIGHEST_ID + 1];
-    private static final Object2IntMap<Class<? extends Tag>> tagToId = new Object2IntOpenHashMap<>();
+    private static final RegisteredTagType[] TAGS = new RegisteredTagType[HIGHEST_ID + 1];
+    private static final Object2IntMap<Class<? extends Tag>> TAG_TO_ID = new Object2IntOpenHashMap<>();
 
     static {
-        tagToId.defaultReturnValue(-1);
+        TAG_TO_ID.defaultReturnValue(-1);
 
         register(ByteTag.ID, ByteTag.class, ByteTag::new);
         register(ShortTag.ID, ShortTag.class, ShortTag::new);
@@ -49,22 +48,21 @@ public final class TagRegistry {
      *
      * @param id  ID of the tag.
      * @param tag Tag class to register.
-     * @throws TagRegisterException If an error occurs while registering the tag.
+     * @throws IllegalArgumentException if the id is unexpectedly out of bounds, or if the id or tag have already been registered
      */
-    public static void register(int id, Class<? extends Tag> tag, Supplier<? extends Tag> supplier) throws TagRegisterException {
+    public static void register(int id, Class<? extends Tag> tag, Supplier<? extends Tag> supplier) {
         if (id < 0 || id > HIGHEST_ID) {
-            throw new TagRegisterException("Tag ID must be between 0 and " + HIGHEST_ID);
+            throw new IllegalArgumentException("Tag ID must be between 0 and " + HIGHEST_ID);
         }
-        if (idToTag[id] != null) {
-            throw new TagRegisterException("Tag ID \"" + id + "\" is already in use.");
+        if (TAGS[id] != null) {
+            throw new IllegalArgumentException("Tag ID \"" + id + "\" is already in use.");
         }
-        if (tagToId.containsKey(tag)) {
-            throw new TagRegisterException("Tag \"" + tag.getSimpleName() + "\" is already registered.");
+        if (TAG_TO_ID.containsKey(tag)) {
+            throw new IllegalArgumentException("Tag \"" + tag.getSimpleName() + "\" is already registered.");
         }
 
-        instanceSuppliers[id] = supplier;
-        idToTag[id] = tag;
-        tagToId.put(tag, id);
+        TAGS[id] = new RegisteredTagType(tag, supplier);
+        TAG_TO_ID.put(tag, id);
     }
 
     /**
@@ -73,9 +71,8 @@ public final class TagRegistry {
      * @param id  ID of the tag to unregister.
      */
     public static void unregister(int id) {
-        tagToId.removeInt(getClassFor(id));
-        idToTag[id] = null;
-        instanceSuppliers[id] = null;
+        TAG_TO_ID.removeInt(getClassFor(id));
+        TAGS[id] = null;
     }
 
     /**
@@ -86,7 +83,7 @@ public final class TagRegistry {
      */
     @Nullable
     public static Class<? extends Tag> getClassFor(int id) {
-        return id >= 0 && id < idToTag.length ? idToTag[id] : null;
+        return id >= 0 && id < TAGS.length ? TAGS[id].type : null;
     }
 
     /**
@@ -96,7 +93,7 @@ public final class TagRegistry {
      * @return The id of the given tag class, or -1 if it cannot be found.
      */
     public static int getIdFor(Class<? extends Tag> clazz) {
-        return tagToId.getInt(clazz);
+        return TAG_TO_ID.getInt(clazz);
     }
 
     /**
@@ -104,14 +101,25 @@ public final class TagRegistry {
      *
      * @param id Id of the tag.
      * @return The created tag.
-     * @throws TagCreateException If an error occurs while creating the tag.
+     * @throws IllegalArgumentException if no tags is registered over the provided id
      */
-    public static Tag createInstance(int id) throws TagCreateException {
-        Supplier<? extends Tag> supplier = id > 0 && id < instanceSuppliers.length ? instanceSuppliers[id] : null;
+    public static Tag createInstance(int id) {
+        Supplier<? extends Tag> supplier = id > 0 && id < TAGS.length ? TAGS[id].supplier : null;
         if (supplier == null) {
-            throw new TagCreateException("Could not find tag with ID \"" + id + "\".");
+            throw new IllegalArgumentException("Could not find tag with ID \"" + id + "\".");
         }
 
         return supplier.get();
+    }
+
+    private static final class RegisteredTagType {
+
+        private final Class<? extends Tag> type;
+        private final Supplier<? extends Tag> supplier;
+
+        private RegisteredTagType(final Class<? extends Tag> type, final Supplier<? extends Tag> supplier) {
+            this.type = type;
+            this.supplier = supplier;
+        }
     }
 }

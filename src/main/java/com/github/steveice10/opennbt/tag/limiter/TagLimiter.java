@@ -39,27 +39,27 @@ public interface TagLimiter {
     void checkLevel(int nestedLevel);
 
     default void countByte() {
-        this.countBytes(1);
+        this.countBytes(Byte.BYTES);
     }
 
     default void countShort() {
-        this.countBytes(2);
+        this.countBytes(Short.BYTES);
     }
 
     default void countInt() {
-        this.countBytes(4);
+        this.countBytes(Integer.BYTES);
     }
 
     default void countFloat() {
-        this.countBytes(4);
+        this.countBytes(Double.BYTES);
     }
 
     default void countLong() {
-        this.countBytes(8);
+        this.countBytes(Long.BYTES);
     }
 
     default void countDouble() {
-        this.countBytes(8);
+        this.countBytes(Double.BYTES);
     }
 
     /**

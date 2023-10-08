@@ -1,4 +1,4 @@
-package com.github.steveice10.opennbt.conversion.builtin;
+package com.github.steveice10.opennbt.conversion.converter;
 
 import com.github.steveice10.opennbt.conversion.ConverterRegistry;
 import com.github.steveice10.opennbt.conversion.TagConverter;

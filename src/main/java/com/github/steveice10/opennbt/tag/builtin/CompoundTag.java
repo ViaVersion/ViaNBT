@@ -1,6 +1,5 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
-import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import java.io.DataInput;
@@ -204,8 +203,6 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
                 tag.read(in, tagLimiter, newNestingLevel);
                 this.value.put(name, tag);
             }
-        } catch (TagCreateException e) {
-            throw new IOException("Failed to create tag.", e);
         } catch (EOFException ignored) {
             throw new IOException("Closing tag was not found!");
         }
