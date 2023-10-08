@@ -3,8 +3,6 @@ package com.github.steveice10.opennbt.tag.builtin;
 import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -12,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A tag containing a list of tags.
@@ -69,7 +68,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
         this.type = null;
         this.value.clear();
 
-        for(Tag tag : value) {
+        for (Tag tag : value) {
             this.add(tag);
         }
     }
@@ -97,9 +96,9 @@ public class ListTag extends Tag implements Iterable<Tag> {
         }
 
         // If empty list, use this as tag type.
-        if(this.type == null) {
+        if (this.type == null) {
             this.type = tag.getClass();
-        } else if(tag.getClass() != this.type) {
+        } else if (tag.getClass() != this.type) {
             throw new IllegalArgumentException("Tag type " + tag.getClass().getSimpleName() + " differs from list type " + this.type.getSimpleName());
         }
 
@@ -148,20 +147,20 @@ public class ListTag extends Tag implements Iterable<Tag> {
         tagLimiter.checkLevel(nestingLevel);
         tagLimiter.countBytes(1 + 4);
         int id = in.readByte();
-        if(id != 0) {
+        if (id != 0) {
             this.type = TagRegistry.getClassFor(id);
-            if(this.type == null) {
+            if (this.type == null) {
                 throw new IOException("Unknown tag ID in ListTag: " + id);
             }
         }
 
         int count = in.readInt();
         int newNestingLevel = nestingLevel + 1;
-        for(int index = 0; index < count; index++) {
+        for (int index = 0; index < count; index++) {
             Tag tag;
             try {
                 tag = TagRegistry.createInstance(id);
-            } catch(TagCreateException e) {
+            } catch (TagCreateException e) {
                 throw new IOException("Failed to create tag.", e);
             }
 
@@ -172,11 +171,11 @@ public class ListTag extends Tag implements Iterable<Tag> {
 
     @Override
     public void write(DataOutput out) throws IOException {
-        if(this.type == null) {
+        if (this.type == null) {
             out.writeByte(0);
         } else {
             int id = TagRegistry.getIdFor(this.type);
-            if(id == -1) {
+            if (id == -1) {
                 throw new IOException("ListTag contains unregistered tag class.");
             }
 
@@ -184,7 +183,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
         }
 
         out.writeInt(this.value.size());
-        for(Tag tag : this.value) {
+        for (Tag tag : this.value) {
             tag.write(out);
         }
     }
@@ -192,7 +191,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
     @Override
     public final ListTag clone() {
         List<Tag> newList = new ArrayList<>();
-        for(Tag value : this.value) {
+        for (Tag value : this.value) {
             newList.add(value.clone());
         }
 

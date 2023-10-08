@@ -15,9 +15,8 @@ import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A registry containing different tag classes.
@@ -53,13 +52,13 @@ public final class TagRegistry {
      * @throws TagRegisterException If an error occurs while registering the tag.
      */
     public static void register(int id, Class<? extends Tag> tag, Supplier<? extends Tag> supplier) throws TagRegisterException {
-        if(id < 0 || id > HIGHEST_ID) {
+        if (id < 0 || id > HIGHEST_ID) {
             throw new TagRegisterException("Tag ID must be between 0 and " + HIGHEST_ID);
         }
-        if(idToTag[id] != null) {
+        if (idToTag[id] != null) {
             throw new TagRegisterException("Tag ID \"" + id + "\" is already in use.");
         }
-        if(tagToId.containsKey(tag)) {
+        if (tagToId.containsKey(tag)) {
             throw new TagRegisterException("Tag \"" + tag.getSimpleName() + "\" is already registered.");
         }
 
@@ -109,7 +108,7 @@ public final class TagRegistry {
      */
     public static Tag createInstance(int id) throws TagCreateException {
         Supplier<? extends Tag> supplier = id > 0 && id < instanceSuppliers.length ? instanceSuppliers[id] : null;
-        if(supplier == null) {
+        if (supplier == null) {
             throw new TagCreateException("Could not find tag with ID \"" + id + "\".");
         }
 

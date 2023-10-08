@@ -1,6 +1,17 @@
 package com.github.steveice10.opennbt.conversion;
 
-import com.github.steveice10.opennbt.conversion.builtin.*;
+import com.github.steveice10.opennbt.conversion.builtin.ByteArrayTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.ByteTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.CompoundTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.DoubleTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.FloatTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.IntArrayTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.IntTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.ListTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.LongArrayTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.LongTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.ShortTagConverter;
+import com.github.steveice10.opennbt.conversion.builtin.StringTagConverter;
 import com.github.steveice10.opennbt.tag.builtin.ByteArrayTag;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
@@ -9,12 +20,11 @@ import com.github.steveice10.opennbt.tag.builtin.FloatTag;
 import com.github.steveice10.opennbt.tag.builtin.IntArrayTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.LongArrayTag;
 import com.github.steveice10.opennbt.tag.builtin.LongTag;
 import com.github.steveice10.opennbt.tag.builtin.ShortTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
-import com.github.steveice10.opennbt.tag.builtin.LongArrayTag;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,11 +66,11 @@ public class ConverterRegistry {
      * @throws ConverterRegisterException If an error occurs while registering the converter.
      */
     public static <T extends Tag, V> void register(Class<T> tag, Class<V> type, TagConverter<T, V> converter) throws ConverterRegisterException {
-        if(tagToConverter.containsKey(tag)) {
+        if (tagToConverter.containsKey(tag)) {
             throw new ConverterRegisterException("Type conversion to tag " + tag.getName() + " is already registered.");
         }
 
-        if(typeToConverter.containsKey(type)) {
+        if (typeToConverter.containsKey(type)) {
             throw new ConverterRegisterException("Tag conversion to type " + type.getName() + " is already registered.");
         }
 
@@ -91,11 +101,11 @@ public class ConverterRegistry {
      * @throws ConversionException If a suitable converter could not be found.
      */
     public static <T extends Tag, V> V convertToValue(T tag) throws ConversionException {
-        if(tag == null || tag.getValue() == null) {
+        if (tag == null || tag.getValue() == null) {
             return null;
         }
 
-        if(!tagToConverter.containsKey(tag.getClass())) {
+        if (!tagToConverter.containsKey(tag.getClass())) {
             throw new ConversionException("Tag type " + tag.getClass().getName() + " has no converter.");
         }
 
@@ -113,24 +123,24 @@ public class ConverterRegistry {
      * @throws ConversionException If a suitable converter could not be found.
      */
     public static <V, T extends Tag> T convertToTag(V value) throws ConversionException {
-        if(value == null) {
+        if (value == null) {
             return null;
         }
 
         TagConverter<T, V> converter = (TagConverter<T, V>) typeToConverter.get(value.getClass());
-        if(converter == null) {
-            for(Class<?> clazz : getAllClasses(value.getClass())) {
-                if(typeToConverter.containsKey(clazz)) {
+        if (converter == null) {
+            for (Class<?> clazz : getAllClasses(value.getClass())) {
+                if (typeToConverter.containsKey(clazz)) {
                     try {
                         converter = (TagConverter<T, V>) typeToConverter.get(clazz);
                         break;
-                    } catch(ClassCastException e) {
+                    } catch (ClassCastException e) {
                     }
                 }
             }
         }
 
-        if(converter == null) {
+        if (converter == null) {
             throw new ConversionException("Value type " + value.getClass().getName() + " has no converter.");
         }
 
@@ -140,14 +150,14 @@ public class ConverterRegistry {
     private static Set<Class<?>> getAllClasses(Class<?> clazz) {
         Set<Class<?>> ret = new LinkedHashSet<Class<?>>();
         Class<?> c = clazz;
-        while(c != null) {
+        while (c != null) {
             ret.add(c);
             ret.addAll(getAllSuperInterfaces(c));
             c = c.getSuperclass();
         }
 
         // Make sure Serializable is at the end to avoid mix-ups.
-        if(ret.contains(Serializable.class)) {
+        if (ret.contains(Serializable.class)) {
             ret.remove(Serializable.class);
             ret.add(Serializable.class);
         }
@@ -157,7 +167,7 @@ public class ConverterRegistry {
 
     private static Set<Class<?>> getAllSuperInterfaces(Class<?> clazz) {
         Set<Class<?>> ret = new HashSet<Class<?>>();
-        for(Class<?> c : clazz.getInterfaces()) {
+        for (Class<?> c : clazz.getInterfaces()) {
             ret.add(c);
             ret.addAll(getAllSuperInterfaces(c));
         }

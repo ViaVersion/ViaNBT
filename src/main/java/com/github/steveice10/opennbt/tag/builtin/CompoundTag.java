@@ -3,8 +3,6 @@ package com.github.steveice10.opennbt.tag.builtin;
 import com.github.steveice10.opennbt.tag.TagCreateException;
 import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.EOFException;
@@ -15,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A compound tag containing other tags.
@@ -205,16 +204,16 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
                 tag.read(in, tagLimiter, newNestingLevel);
                 this.value.put(name, tag);
             }
-        } catch(TagCreateException e) {
+        } catch (TagCreateException e) {
             throw new IOException("Failed to create tag.", e);
-        } catch(EOFException ignored) {
+        } catch (EOFException ignored) {
             throw new IOException("Closing tag was not found!");
         }
     }
 
     @Override
     public void write(DataOutput out) throws IOException {
-        for(Entry<String, Tag> entry : this.value.entrySet()) {
+        for (Entry<String, Tag> entry : this.value.entrySet()) {
             Tag tag = entry.getValue();
             out.writeByte(tag.getTagId());
             out.writeUTF(entry.getKey());
@@ -241,7 +240,7 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
     @Override
     public final CompoundTag clone() {
         LinkedHashMap<String, Tag> newMap = new LinkedHashMap<>();
-        for(Entry<String, Tag> entry : this.value.entrySet()) {
+        for (Entry<String, Tag> entry : this.value.entrySet()) {
             newMap.put(entry.getKey(), entry.getValue().clone());
         }
 

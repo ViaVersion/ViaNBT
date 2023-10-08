@@ -1,7 +1,6 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -85,7 +84,7 @@ public class IntArrayTag extends Tag {
         tagLimiter.countInt();
         this.value = new int[in.readInt()];
         tagLimiter.countBytes(4 * this.value.length);
-        for(int index = 0; index < this.value.length; index++) {
+        for (int index = 0; index < this.value.length; index++) {
             this.value[index] = in.readInt();
         }
     }

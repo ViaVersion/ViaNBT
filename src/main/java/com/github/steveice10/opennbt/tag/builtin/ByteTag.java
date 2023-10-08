@@ -1,7 +1,6 @@
 package com.github.steveice10.opennbt.tag.builtin;
 
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;

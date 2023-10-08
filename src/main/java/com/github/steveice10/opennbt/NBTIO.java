@@ -2,7 +2,6 @@ package com.github.steveice10.opennbt;
 
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
-
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
@@ -131,8 +130,8 @@ public final class NBTIO {
      * @throws java.io.IOException If an I/O error occurs.
      */
     public static void writeFile(CompoundTag tag, File file, boolean compressed, boolean littleEndian) throws IOException {
-        if(!file.exists()) {
-            if(file.getParentFile() != null && !file.getParentFile().exists()) {
+        if (!file.exists()) {
+            if (file.getParentFile() != null && !file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
 
@@ -206,7 +205,7 @@ public final class NBTIO {
      */
     public static CompoundTag readTag(DataInput in, TagLimiter tagLimiter) throws IOException {
         int id = in.readByte();
-        if(id != CompoundTag.ID) {
+        if (id != CompoundTag.ID) {
             throw new IOException(String.format("Expected root tag to be a CompoundTag, was %s", id));
         }
 
@@ -278,13 +277,13 @@ public final class NBTIO {
 
         @Override
         public void readFully(byte[] b, int off, int len) throws IOException {
-            if(len < 0) {
+            if (len < 0) {
                 throw new IndexOutOfBoundsException();
             } else {
                 int read;
-                for(int pos = 0; pos < len; pos += read) {
+                for (int pos = 0; pos < len; pos += read) {
                     read = this.in.read(b, off + pos, len - pos);
-                    if(read < 0) {
+                    if (read < 0) {
                         throw new EOFException();
                     }
                 }
@@ -295,7 +294,7 @@ public final class NBTIO {
         public int skipBytes(int n) throws IOException {
             int total = 0;
             int skipped = 0;
-            while(total < n && (skipped = (int) this.in.skip(n - total)) > 0) {
+            while (total < n && (skipped = (int) this.in.skip(n - total)) > 0) {
                 total += skipped;
             }
 
@@ -305,7 +304,7 @@ public final class NBTIO {
         @Override
         public boolean readBoolean() throws IOException {
             int val = this.in.read();
-            if(val < 0) {
+            if (val < 0) {
                 throw new EOFException();
             }
 
@@ -315,7 +314,7 @@ public final class NBTIO {
         @Override
         public byte readByte() throws IOException {
             int val = this.in.read();
-            if(val < 0) {
+            if (val < 0) {
                 throw new EOFException();
             }
 
@@ -325,7 +324,7 @@ public final class NBTIO {
         @Override
         public int readUnsignedByte() throws IOException {
             int val = this.in.read();
-            if(val < 0) {
+            if (val < 0) {
                 throw new EOFException();
             }
 
@@ -336,7 +335,7 @@ public final class NBTIO {
         public short readShort() throws IOException {
             int b1 = this.in.read();
             int b2 = this.in.read();
-            if((b1 | b2) < 0) {
+            if ((b1 | b2) < 0) {
                 throw new EOFException();
             }
 
@@ -347,7 +346,7 @@ public final class NBTIO {
         public int readUnsignedShort() throws IOException {
             int b1 = this.in.read();
             int b2 = this.in.read();
-            if((b1 | b2) < 0) {
+            if ((b1 | b2) < 0) {
                 throw new EOFException();
             }
 
@@ -358,7 +357,7 @@ public final class NBTIO {
         public char readChar() throws IOException {
             int b1 = this.in.read();
             int b2 = this.in.read();
-            if((b1 | b2) < 0) {
+            if ((b1 | b2) < 0) {
                 throw new EOFException();
             }
 
@@ -371,7 +370,7 @@ public final class NBTIO {
             int b2 = this.in.read();
             int b3 = this.in.read();
             int b4 = this.in.read();
-            if((b1 | b2 | b3 | b4) < 0) {
+            if ((b1 | b2 | b3 | b4) < 0) {
                 throw new EOFException();
             }
 
@@ -388,7 +387,7 @@ public final class NBTIO {
             long b6 = this.in.read();
             long b7 = this.in.read();
             long b8 = this.in.read();
-            if((b1 | b2 | b3 | b4 | b5 | b6 | b7 | b8) < 0) {
+            if ((b1 | b2 | b3 | b4 | b5 | b6 | b7 | b8) < 0) {
                 throw new EOFException();
             }
 
@@ -495,7 +494,7 @@ public final class NBTIO {
         @Override
         public void writeBytes(String s) throws IOException {
             int len = s.length();
-            for(int index = 0; index < len; index++) {
+            for (int index = 0; index < len; index++) {
                 this.out.write((byte) s.charAt(index));
             }
         }
@@ -503,7 +502,7 @@ public final class NBTIO {
         @Override
         public void writeChars(String s) throws IOException {
             int len = s.length();
-            for(int index = 0; index < len; index++) {
+            for (int index = 0; index < len; index++) {
                 char c = s.charAt(index);
                 this.out.write(c & 0xFF);
                 this.out.write((c >>> 8) & 0xFF);

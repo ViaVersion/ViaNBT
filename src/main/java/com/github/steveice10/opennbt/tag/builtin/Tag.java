@@ -73,13 +73,13 @@ public abstract class Tag implements Cloneable {
     public String toString() {
         //TODO cleanup/push down
         String value = "";
-        if(this.getValue() != null) {
+        if (this.getValue() != null) {
             value = this.getValue().toString();
-            if(this.getValue().getClass().isArray()) {
+            if (this.getValue().getClass().isArray()) {
                 StringBuilder build = new StringBuilder();
                 build.append("[");
-                for(int index = 0; index < Array.getLength(this.getValue()); index++) {
-                    if(index > 0) {
+                for (int index = 0; index < Array.getLength(this.getValue()); index++) {
+                    if (index > 0) {
                         build.append(", ");
                     }
 
