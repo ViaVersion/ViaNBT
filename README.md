@@ -32,7 +32,7 @@ This project also includes code from [adventure](https://github.com/KyoriPowered
 <dependency>
     <groupId>com.viaversion</groupId>
     <artifactId>nbt</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 

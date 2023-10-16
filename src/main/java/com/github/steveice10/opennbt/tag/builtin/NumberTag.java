@@ -6,6 +6,14 @@ package com.github.steveice10.opennbt.tag.builtin;
 public abstract class NumberTag extends Tag {
 
     /**
+     * Gets the number value of this tag.
+     *
+     * @return Number value of this tag.
+     */
+    @Override
+    public abstract Number getValue();
+
+    /**
      * Gets the byte value of this tag.
      *
      * @return Byte value of this tag.
