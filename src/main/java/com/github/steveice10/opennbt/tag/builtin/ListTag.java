@@ -77,7 +77,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
      *
      * @return The ListTag's element type, or null if the list does not yet have a defined type.
      */
-    public Class<? extends Tag> getElementType() {
+    public @Nullable Class<? extends Tag> getElementType() {
         return this.type;
     }
 

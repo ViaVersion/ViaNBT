@@ -46,4 +46,16 @@ public abstract class NumberTag extends Tag {
      * @return Double value of this tag.
      */
     public abstract double asDouble();
+
+    /**
+     * Gets the boolean value of this tag.
+     * <p>
+     * Booleans do not have a direct nbt representation in NBT per se,
+     * but check whether a number value is different to 0.
+     *
+     * @return Boolean value of this tag.
+     */
+    public boolean asBoolean() {
+        return this.asByte() != 0;
+    }
 }
