@@ -108,7 +108,7 @@ public class ConverterRegistry {
             return null;
         }
 
-        TagConverter<T, ? extends V> converter = (TagConverter<T, ? extends V>) TAG_TO_CONVERTER.get(tag.getClass());
+        TagConverter<T, ? extends V> converter = (TagConverter<T, ? extends V>) TAG_TO_CONVERTER.get(tag.getTagId());
         if (converter == null) {
             throw new ConversionException("Tag type " + tag.getClass().getName() + " has no converter.");
         }
