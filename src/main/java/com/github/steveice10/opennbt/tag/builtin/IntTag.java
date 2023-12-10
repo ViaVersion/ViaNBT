@@ -37,6 +37,11 @@ public class IntTag extends NumberTag {
         return this.value;
     }
 
+    @Override
+    public String asRawString() {
+        return Integer.toString(this.value);
+    }
+
     /**
      * Sets the value of this tag.
      *

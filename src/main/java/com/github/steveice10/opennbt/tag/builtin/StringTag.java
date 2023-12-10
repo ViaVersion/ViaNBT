@@ -36,6 +36,11 @@ public class StringTag extends Tag {
         return this.value;
     }
 
+    @Override
+    public String asRawString() {
+        return this.value;
+    }
+
     /**
      * Sets the value of this tag.
      *

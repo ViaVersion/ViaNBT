@@ -37,6 +37,11 @@ public class ByteTag extends NumberTag {
         return this.value;
     }
 
+    @Override
+    public String asRawString() {
+        return Byte.toString(this.value);
+    }
+
     /**
      * Sets the value of this tag.
      *

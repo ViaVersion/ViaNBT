@@ -37,6 +37,11 @@ public class FloatTag extends NumberTag {
         return this.value;
     }
 
+    @Override
+    public String asRawString() {
+        return Float.toString(this.value);
+    }
+
     /**
      * Sets the value of this tag.
      *

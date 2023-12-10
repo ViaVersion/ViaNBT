@@ -21,10 +21,20 @@ public abstract class Tag implements Cloneable {
     public abstract Object getValue();
 
     /**
+     * Returns the raw string representation of the value of this tag.
+     * For SNBT, use {@link SNBT#serialize(Tag)} or {@link #toString()}.
+     *
+     * @return raw string representation of the value of this tag
+     */
+    public String asRawString() {
+        return this.getValue().toString();
+    }
+
+    /**
      * Returns the unchecked value of this tag.
      *
-     * @return unchecked value of this tag
      * @param <T> expected type
+     * @return unchecked value of this tag
      */
     public <T> T value() {
         return (T) getValue();
@@ -43,7 +53,7 @@ public abstract class Tag implements Cloneable {
     /**
      * Reads this tag from an input stream.
      *
-     * @param in Stream to write to.
+     * @param in         Stream to write to.
      * @param tagLimiter taglimiter
      * @throws java.io.IOException If an I/O error occurs.
      */
@@ -54,8 +64,8 @@ public abstract class Tag implements Cloneable {
     /**
      * Reads this tag from an input stream.
      *
-     * @param in Stream to write to.
-     * @param tagLimiter taglimiter
+     * @param in           Stream to write to.
+     * @param tagLimiter   taglimiter
      * @param nestingLevel current level of nesting
      * @throws java.io.IOException If an I/O error occurs.
      */

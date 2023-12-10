@@ -35,6 +35,11 @@ public class ByteArrayTag extends Tag {
         return this.value;
     }
 
+    @Override
+    public String asRawString() {
+        return Arrays.toString(this.value);
+    }
+
     /**
      * Sets the value of this tag.
      *

@@ -108,6 +108,7 @@ public class ConverterRegistry {
             return null;
         }
 
+        //noinspection unchecked
         TagConverter<T, ? extends V> converter = (TagConverter<T, ? extends V>) TAG_TO_CONVERTER.get(tag.getTagId());
         if (converter == null) {
             throw new ConversionException("Tag type " + tag.getClass().getName() + " has no converter.");
@@ -125,17 +126,26 @@ public class ConverterRegistry {
      * @return The converted tag.
      * @throws ConversionException If a suitable converter could not be found.
      */
+    @SuppressWarnings("unchecked")
     public static <V, T extends Tag> @Nullable T convertToTag(@Nullable V value) throws ConversionException {
         if (value == null) {
             return null;
         }
 
-        // No need to check super classes since registering custom tags is not allowed
-        // and all the given ones cannot be extended, super class can't be instantiated
         Class<?> valueClass = value.getClass();
         TagConverter<T, ? super V> converter = (TagConverter<T, ? super V>) TYPE_TO_CONVERTER.get(valueClass);
         if (converter == null) {
-            throw new ConversionException("Value type " + valueClass.getName() + " has no converter.");
+            // Only check interfaces since you cannot register custom tags
+            for (Class<?> interfaceClass : valueClass.getInterfaces()) {
+                converter = (TagConverter<T, ? super V>) TYPE_TO_CONVERTER.get(interfaceClass);
+                if (converter != null) {
+                    break;
+                }
+            }
+
+            if (converter == null) {
+                throw new ConversionException("Value type " + valueClass.getName() + " has no converter.");
+            }
         }
 
         return converter.convert(value);

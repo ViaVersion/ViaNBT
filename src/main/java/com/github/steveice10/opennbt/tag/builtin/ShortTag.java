@@ -37,6 +37,11 @@ public class ShortTag extends NumberTag {
         return this.value;
     }
 
+    @Override
+    public String asRawString() {
+        return Short.toString(this.value);
+    }
+
     /**
      * Sets the value of this tag.
      *

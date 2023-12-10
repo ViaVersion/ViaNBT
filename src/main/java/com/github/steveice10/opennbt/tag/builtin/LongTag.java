@@ -37,6 +37,11 @@ public class LongTag extends NumberTag {
         return this.value;
     }
 
+    @Override
+    public String asRawString() {
+        return Long.toString(this.value);
+    }
+
     /**
      * Sets the value of this tag.
      *
