@@ -134,6 +134,10 @@ public class ListTag extends Tag implements Iterable<Tag> {
         return this.value.size();
     }
 
+    public boolean isEmpty() {
+        return this.value.isEmpty();
+    }
+
     @Override
     public Iterator<Tag> iterator() {
         return this.value.iterator();

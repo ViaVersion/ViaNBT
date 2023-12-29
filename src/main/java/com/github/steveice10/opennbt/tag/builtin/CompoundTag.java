@@ -112,14 +112,50 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
     /**
      * Puts the tag into this compound tag.
      *
-     * @param <T>  Type of tag to put.
+     * @param <T>     Type of tag to put.
      * @param tagName Name of the tag.
-     * @param tag  Tag to put into this compound tag.
+     * @param tag     Tag to put into this compound tag.
      * @return The previous tag associated with its name, or null if there wasn't one.
      */
     @Nullable
     public <T extends Tag> T put(String tagName, T tag) {
         return (T) this.value.put(tagName, tag);
+    }
+
+    public void putString(String tagName, String value) {
+        this.value.put(tagName, new StringTag(value));
+    }
+
+    public void putByte(String tagName, byte value) {
+        this.value.put(tagName, new ByteTag(value));
+    }
+
+    public void putInt(String tagName, int value) {
+        this.value.put(tagName, new IntTag(value));
+    }
+
+    public void putShort(String tagName, short value) {
+        this.value.put(tagName, new ShortTag(value));
+    }
+
+    public void putLong(String tagName, long value) {
+        this.value.put(tagName, new LongTag(value));
+    }
+
+    public void putFloat(String tagName, float value) {
+        this.value.put(tagName, new FloatTag(value));
+    }
+
+    public void putDouble(String tagName, double value) {
+        this.value.put(tagName, new DoubleTag(value));
+    }
+
+    public void putBoolean(String tagName, boolean value) {
+        this.value.put(tagName, new ByteTag((byte) (value ? 1 : 0)));
+    }
+
+    public void putAll(CompoundTag compoundTag) {
+        this.value.putAll(compoundTag.value);
     }
 
     /**
