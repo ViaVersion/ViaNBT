@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A tag containing an integer array.
  */
-public class IntArrayTag extends Tag {
+public class IntArrayTag extends NumberArrayTag {
     public static final int ID = 11;
     private static final int[] EMPTY_ARRAY = new int[0];
     private int[] value;
@@ -26,7 +26,7 @@ public class IntArrayTag extends Tag {
      *
      * @param value The value of the tag.
      */
-    public IntArrayTag(int[] value) {
+    public IntArrayTag(final int[] value) {
         if (value == null) {
             throw new NullPointerException("value cannot be null");
         }
@@ -48,7 +48,7 @@ public class IntArrayTag extends Tag {
      *
      * @param value New value of this tag.
      */
-    public void setValue(int[] value) {
+    public void setValue(final int[] value) {
         if (value == null) {
             throw new NullPointerException("value cannot be null");
         }
@@ -61,7 +61,7 @@ public class IntArrayTag extends Tag {
      * @param index Index of the value.
      * @return The value at the given index.
      */
-    public int getValue(int index) {
+    public int getValue(final int index) {
         return this.value[index];
     }
 
@@ -71,21 +71,26 @@ public class IntArrayTag extends Tag {
      * @param index Index of the value.
      * @param value Value to set.
      */
-    public void setValue(int index, int value) {
+    public void setValue(final int index, final int value) {
         this.value[index] = value;
     }
 
-    /**
-     * Gets the length of this tag's array.
-     *
-     * @return This tag's array length.
-     */
+    @Override
     public int length() {
         return this.value.length;
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
+    public ListTag toListTag() {
+        final ListTag list = new ListTag();
+        for (final int i : this.value) {
+            list.add(new IntTag(i));
+        }
+        return list;
+    }
+
+    @Override
+    public void read(final DataInput in, final TagLimiter tagLimiter, final int nestingLevel) throws IOException {
         tagLimiter.countInt();
         this.value = new int[in.readInt()];
         tagLimiter.countBytes(4 * this.value.length);
@@ -95,9 +100,9 @@ public class IntArrayTag extends Tag {
     }
 
     @Override
-    public void write(DataOutput out) throws IOException {
+    public void write(final DataOutput out) throws IOException {
         out.writeInt(this.value.length);
-        for (int i : this.value) {
+        for (final int i : this.value) {
             out.writeInt(i);
         }
     }
@@ -106,7 +111,7 @@ public class IntArrayTag extends Tag {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        IntArrayTag that = (IntArrayTag) o;
+        final IntArrayTag that = (IntArrayTag) o;
         return Arrays.equals(this.value, that.value);
     }
 

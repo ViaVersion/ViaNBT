@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A tag containing a long array.
  */
-public class LongArrayTag extends Tag {
+public class LongArrayTag extends NumberArrayTag {
     public static final int ID = 12;
     private static final long[] EMPTY_ARRAY = new long[0];
     private long[] value;
@@ -75,13 +75,18 @@ public class LongArrayTag extends Tag {
         this.value[index] = value;
     }
 
-    /**
-     * Gets the length of this tag's array.
-     *
-     * @return This tag's array length.
-     */
+    @Override
     public int length() {
         return this.value.length;
+    }
+
+    @Override
+    public ListTag toListTag() {
+        final ListTag list = new ListTag(LongTag.class);
+        for (final long l : this.value) {
+            list.add(new LongTag(l));
+        }
+        return list;
     }
 
     @Override

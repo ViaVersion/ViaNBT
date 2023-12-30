@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A tag containing a byte array.
  */
-public class ByteArrayTag extends Tag {
+public class ByteArrayTag extends NumberArrayTag {
     public static final int ID = 7;
     private static final byte[] EMPTY_ARRAY = new byte[0];
     private byte[] value;
@@ -73,13 +73,18 @@ public class ByteArrayTag extends Tag {
         this.value[index] = value;
     }
 
-    /**
-     * Gets the length of this tag's array.
-     *
-     * @return This tag's array length.
-     */
+    @Override
     public int length() {
         return this.value.length;
+    }
+
+    @Override
+    public ListTag toListTag() {
+        final ListTag list = new ListTag(ByteTag.class);
+        for (final byte b : this.value) {
+            list.add(new ByteTag(b));
+        }
+        return list;
     }
 
     @Override
