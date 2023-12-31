@@ -8,11 +8,12 @@ This project is derived from an earlier version of [OpenNBT](https://github.com/
 * `SNBT` for string serialization
 * Add primitive getter methods to number types
 * Don't wrap values given in Tag#setValue / Tag constructors
-* Abstract NumberTag class for easier number handling
+* NumberTag and NumberArrayTag interfaces for easier number handling
 * Don't use reflection when creating tag instances
 * Directly use value in copy(), also replacing clone()
 * Implement tag specific equals() methods
 * Update to Java 8
+* A bunch of other small improvements and fixes
 
 This project also includes code from [adventure](https://github.com/KyoriPowered/adventure) used for SNBT serialization.
 
@@ -31,7 +32,7 @@ This project also includes code from [adventure](https://github.com/KyoriPowered
 <dependency>
     <groupId>com.viaversion</groupId>
     <artifactId>nbt</artifactId>
-    <version>4.0.0</version>
+    <version>5.0.0</version>
 </dependency>
 ```
 
@@ -43,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.viaversion:nbt:4.0.0")
+    implementation("com.viaversion:nbt:5.0.0")
 }
 ```
 

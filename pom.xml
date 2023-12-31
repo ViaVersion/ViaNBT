@@ -5,7 +5,7 @@
 
     <groupId>com.viaversion</groupId>
     <artifactId>nbt</artifactId>
-    <version>4.4.5</version>
+    <version>5.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>ViaNBT</name>
@@ -48,21 +48,20 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/ViaVersion/OpenNBT/issues</url>
+        <url>https://github.com/ViaVersion/ViaNBT/issues</url>
     </issueManagement>
 
     <dependencies>
-        <!-- Expected to be bundled -->
         <dependency>
             <groupId>it.unimi.dsi</groupId>
             <artifactId>fastutil</artifactId>
             <version>8.5.2</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>24.0.1</version>
+            <version>24.1.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -73,7 +72,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.3</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -91,7 +90,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
