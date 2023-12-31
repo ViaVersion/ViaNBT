@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ListTag extends Tag implements Iterable<Tag> {
     public static final int ID = 9;
-    private final List<Tag> value;
+    private List<Tag> value;
     private Class<? extends Tag> type;
 
     /**
@@ -28,6 +28,7 @@ public class ListTag extends Tag implements Iterable<Tag> {
 
     /**
      * Creates an empty list tag and type.
+     *
      * @param type Tag type of the list.
      */
     public ListTag(@Nullable Class<? extends Tag> type) {
@@ -43,13 +44,45 @@ public class ListTag extends Tag implements Iterable<Tag> {
      * @throws IllegalArgumentException If all tags in the list are not of the same type.
      */
     public ListTag(List<Tag> value) throws IllegalArgumentException {
-        this.value = new ArrayList<>(value.size());
         this.setValue(value);
+    }
+
+    public static ListTag read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
+        tagLimiter.checkLevel(nestingLevel);
+        tagLimiter.countBytes(Byte.BYTES + Integer.BYTES);
+
+        int id = in.readByte();
+        Class<? extends Tag> type = null;
+        if (id != TagRegistry.END) {
+            type = TagRegistry.getClassFor(id);
+            if (type == null) {
+                throw new IOException("Unknown tag ID in ListTag: " + id);
+            }
+        }
+
+        ListTag listTag = new ListTag(type);
+        int count = in.readInt();
+        int newNestingLevel = nestingLevel + 1;
+        for (int index = 0; index < count; index++) {
+            Tag tag;
+            try {
+                tag = TagRegistry.read(id, in, tagLimiter, newNestingLevel);
+            } catch (IllegalArgumentException e) {
+                throw new IOException("Failed to create tag.", e);
+            }
+            listTag.add(tag);
+        }
+        return listTag;
     }
 
     @Override
     public List<Tag> getValue() {
         return this.value;
+    }
+
+    @Override
+    public String asRawString() {
+        return this.value.toString();
     }
 
     /**
@@ -60,15 +93,14 @@ public class ListTag extends Tag implements Iterable<Tag> {
      * @throws IllegalArgumentException If all tags in the list are not of the same type.
      */
     public void setValue(List<Tag> value) throws IllegalArgumentException {
-        if (value == null) {
-            throw new NullPointerException("value cannot be null");
-        }
-
-        this.type = null;
-        this.value.clear();
-
-        for (Tag tag : value) {
-            this.add(tag);
+        this.value = new ArrayList<>(value);
+        if (!value.isEmpty()) {
+            this.type = value.get(0).getClass();
+            for (int i = 1; i < value.size(); i++) {
+                this.checkType(value.get(i));
+            }
+        } else {
+            this.type = null;
         }
     }
 
@@ -90,18 +122,20 @@ public class ListTag extends Tag implements Iterable<Tag> {
      * @throws IllegalArgumentException If the tag's type differs from the list tag's type.
      */
     public boolean add(Tag tag) throws IllegalArgumentException {
-        if (tag == null) {
-            throw new NullPointerException("tag cannot be null");
-        }
-
-        // If empty list, use this as tag type.
+        // If currently empty, use this as the tag type
         if (this.type == null) {
             this.type = tag.getClass();
         } else if (tag.getClass() != this.type) {
-            throw new IllegalArgumentException("Tag type " + tag.getClass().getSimpleName() + " differs from list type " + this.type.getSimpleName());
+            this.checkType(tag);
         }
 
         return this.value.add(tag);
+    }
+
+    private void checkType(Tag tag) throws IllegalArgumentException {
+        if (tag.getClass() != this.type) {
+            throw new IllegalArgumentException("Tag type " + tag.getClass().getSimpleName() + " differs from list type " + this.type.getSimpleName());
+        }
     }
 
     /**
@@ -144,38 +178,9 @@ public class ListTag extends Tag implements Iterable<Tag> {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        this.type = null;
-
-        tagLimiter.checkLevel(nestingLevel);
-        tagLimiter.countBytes(1 + 4);
-        int id = in.readByte();
-        if (id != 0) {
-            this.type = TagRegistry.getClassFor(id);
-            if (this.type == null) {
-                throw new IOException("Unknown tag ID in ListTag: " + id);
-            }
-        }
-
-        int count = in.readInt();
-        int newNestingLevel = nestingLevel + 1;
-        for (int index = 0; index < count; index++) {
-            Tag tag;
-            try {
-                tag = TagRegistry.createInstance(id);
-            } catch (IllegalArgumentException e) {
-                throw new IOException("Failed to create tag.", e);
-            }
-
-            tag.read(in, tagLimiter, newNestingLevel);
-            this.add(tag);
-        }
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         if (this.type == null) {
-            out.writeByte(0);
+            out.writeByte(TagRegistry.END);
         } else {
             int id = TagRegistry.getIdFor(this.type);
             if (id == -1) {
@@ -192,10 +197,10 @@ public class ListTag extends Tag implements Iterable<Tag> {
     }
 
     @Override
-    public final ListTag clone() {
+    public ListTag copy() {
         List<Tag> newList = new ArrayList<>();
         for (Tag value : this.value) {
-            newList.add(value.clone());
+            newList.add(value.copy());
         }
 
         return new ListTag(newList);

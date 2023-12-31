@@ -28,6 +28,11 @@ public class IntTag extends NumberTag {
         this.value = value;
     }
 
+    public static IntTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        tagLimiter.countInt();
+        return new IntTag(in.readInt());
+    }
+
     /**
      * @deprecated use {@link #asInt()}
      */
@@ -52,12 +57,6 @@ public class IntTag extends NumberTag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        tagLimiter.countInt();
-        this.value = in.readInt();
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeInt(this.value);
     }
@@ -76,7 +75,7 @@ public class IntTag extends NumberTag {
     }
 
     @Override
-    public final IntTag clone() {
+    public IntTag copy() {
         return new IntTag(this.value);
     }
 

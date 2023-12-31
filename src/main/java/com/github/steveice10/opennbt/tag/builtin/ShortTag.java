@@ -28,6 +28,11 @@ public class ShortTag extends NumberTag {
         this.value = value;
     }
 
+    public static ShortTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        tagLimiter.countShort();
+        return new ShortTag(in.readShort());
+    }
+
     /**
      * @deprecated use {@link #asShort()}
      */
@@ -52,12 +57,6 @@ public class ShortTag extends NumberTag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        tagLimiter.countShort();
-        this.value = in.readShort();
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeShort(this.value);
     }
@@ -76,7 +75,7 @@ public class ShortTag extends NumberTag {
     }
 
     @Override
-    public final ShortTag clone() {
+    public ShortTag copy() {
         return new ShortTag(this.value);
     }
 

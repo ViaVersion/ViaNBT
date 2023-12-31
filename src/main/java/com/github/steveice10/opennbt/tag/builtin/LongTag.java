@@ -28,6 +28,11 @@ public class LongTag extends NumberTag {
         this.value = value;
     }
 
+    public static LongTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        tagLimiter.countLong();
+        return new LongTag(in.readLong());
+    }
+
     /**
      * @deprecated use {@link #asLong()}
      */
@@ -52,12 +57,6 @@ public class LongTag extends NumberTag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        tagLimiter.countLong();
-        this.value = in.readLong();
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeLong(this.value);
     }
@@ -76,7 +75,7 @@ public class LongTag extends NumberTag {
     }
 
     @Override
-    public final LongTag clone() {
+    public LongTag copy() {
         return new LongTag(this.value);
     }
 

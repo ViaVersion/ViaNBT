@@ -82,4 +82,9 @@ public interface TagLimiter {
      * @return currently read bytes
      */
     int bytes();
+
+    /**
+     * Resets the current byte count.
+     */
+    void reset();
 }

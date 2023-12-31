@@ -33,6 +33,16 @@ public class LongArrayTag extends NumberArrayTag {
         this.value = value;
     }
 
+    public static LongArrayTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        tagLimiter.countInt();
+        long[] value = new long[in.readInt()];
+        tagLimiter.countBytes(Long.BYTES * value.length);
+        for (int index = 0; index < value.length; index++) {
+            value[index] = in.readLong();
+        }
+        return new LongArrayTag(value);
+    }
+
     @Override
     public long[] getValue() {
         return this.value;
@@ -90,16 +100,6 @@ public class LongArrayTag extends NumberArrayTag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        tagLimiter.countInt();
-        this.value = new long[in.readInt()];
-        tagLimiter.countBytes(8 * this.value.length);
-        for (int index = 0; index < this.value.length; index++) {
-            this.value[index] = in.readLong();
-        }
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeInt(this.value.length);
         for (long l : this.value) {
@@ -121,7 +121,7 @@ public class LongArrayTag extends NumberArrayTag {
     }
 
     @Override
-    public final LongArrayTag clone() {
+    public LongArrayTag copy() {
         return new LongArrayTag(this.value.clone());
     }
 

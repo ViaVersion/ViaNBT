@@ -9,9 +9,8 @@ This project is derived from an earlier version of [OpenNBT](https://github.com/
 * Add primitive getter methods to number types
 * Don't wrap values given in Tag#setValue / Tag constructors
 * Abstract NumberTag class for easier number handling
-* Always read/write CompoundTags in NBTIO
 * Don't use reflection when creating tag instances
-* Directly use value in clone()
+* Directly use value in copy(), also replacing clone()
 * Implement tag specific equals() methods
 * Update to Java 8
 
@@ -32,7 +31,7 @@ This project also includes code from [adventure](https://github.com/KyoriPowered
 <dependency>
     <groupId>com.viaversion</groupId>
     <artifactId>nbt</artifactId>
-    <version>3.2.0</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
@@ -44,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.viaversion:nbt:3.0.0")
+    implementation("com.viaversion:nbt:4.0.0")
 }
 ```
 

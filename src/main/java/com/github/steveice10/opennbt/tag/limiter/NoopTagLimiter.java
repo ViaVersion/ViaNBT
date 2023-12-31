@@ -26,4 +26,8 @@ final class NoopTagLimiter implements TagLimiter {
     public int bytes() {
         return 0;
     }
+
+    @Override
+    public void reset() {
+    }
 }

@@ -40,4 +40,9 @@ final class TagLimiterImpl implements TagLimiter {
     public int bytes() {
         return bytes;
     }
+
+    @Override
+    public void reset() {
+        this.bytes = 0;
+    }
 }

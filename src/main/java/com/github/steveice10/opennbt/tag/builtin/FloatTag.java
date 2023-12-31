@@ -28,6 +28,11 @@ public class FloatTag extends NumberTag {
         this.value = value;
     }
 
+    public static FloatTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        tagLimiter.countFloat();
+        return new FloatTag(in.readFloat());
+    }
+
     /**
      * @deprecated use {@link #asFloat()}
      */
@@ -52,12 +57,6 @@ public class FloatTag extends NumberTag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        tagLimiter.countFloat();
-        this.value = in.readFloat();
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeFloat(this.value);
     }
@@ -76,7 +75,7 @@ public class FloatTag extends NumberTag {
     }
 
     @Override
-    public final FloatTag clone() {
+    public FloatTag copy() {
         return new FloatTag(this.value);
     }
 

@@ -27,7 +27,18 @@ public class ByteArrayTag extends NumberArrayTag {
      * @param value The value of the tag.
      */
     public ByteArrayTag(byte[] value) {
+        if (value == null) {
+            throw new NullPointerException("value cannot be null");
+        }
         this.value = value;
+    }
+
+    public static ByteArrayTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        tagLimiter.countInt();
+        byte[] value = new byte[in.readInt()];
+        tagLimiter.countBytes(value.length);
+        in.readFully(value);
+        return new ByteArrayTag(value);
     }
 
     @Override
@@ -88,14 +99,6 @@ public class ByteArrayTag extends NumberArrayTag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        tagLimiter.countInt();
-        this.value = new byte[in.readInt()];
-        tagLimiter.countBytes(this.value.length);
-        in.readFully(this.value);
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeInt(this.value.length);
         out.write(this.value);
@@ -115,7 +118,7 @@ public class ByteArrayTag extends NumberArrayTag {
     }
 
     @Override
-    public final ByteArrayTag clone() {
+    public ByteArrayTag copy() {
         return new ByteArrayTag(this.value);
     }
 

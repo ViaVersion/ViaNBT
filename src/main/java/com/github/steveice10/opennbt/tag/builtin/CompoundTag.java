@@ -4,7 +4,6 @@ import com.github.steveice10.opennbt.tag.TagRegistry;
 import com.github.steveice10.opennbt.tag.limiter.TagLimiter;
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.EOFException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -49,9 +48,41 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
         this.value = value;
     }
 
+    public static CompoundTag read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
+        tagLimiter.checkLevel(nestingLevel);
+        int newNestingLevel = nestingLevel + 1;
+        int id;
+
+        CompoundTag compoundTag = new CompoundTag();
+        while (true) {
+            tagLimiter.countByte();
+            id = in.readByte();
+            if (id == TagRegistry.END) {
+                break;
+            }
+
+            String name = in.readUTF();
+            tagLimiter.countBytes(2 * name.length());
+
+            Tag tag;
+            try {
+                tag = TagRegistry.read(id, in, tagLimiter, newNestingLevel);
+            } catch (IllegalArgumentException e) {
+                throw new IOException("Failed to create tag.", e);
+            }
+            compoundTag.value.put(name, tag);
+        }
+        return compoundTag;
+    }
+
     @Override
     public Map<String, Tag> getValue() {
         return this.value;
+    }
+
+    @Override
+    public String asRawString() {
+        return this.value.toString();
     }
 
     /**
@@ -219,32 +250,6 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        try {
-            tagLimiter.checkLevel(nestingLevel);
-            int newNestingLevel = nestingLevel + 1;
-            int id;
-            while (true) {
-                tagLimiter.countByte();
-                id = in.readByte();
-                if (id == 0) {
-                    // End tag
-                    break;
-                }
-
-                String name = in.readUTF();
-                tagLimiter.countBytes(2 * name.length());
-
-                Tag tag = TagRegistry.createInstance(id);
-                tag.read(in, tagLimiter, newNestingLevel);
-                this.value.put(name, tag);
-            }
-        } catch (EOFException ignored) {
-            throw new IOException("Closing tag was not found!");
-        }
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         for (Entry<String, Tag> entry : this.value.entrySet()) {
             Tag tag = entry.getValue();
@@ -271,10 +276,10 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
     }
 
     @Override
-    public final CompoundTag clone() {
+    public CompoundTag copy() {
         LinkedHashMap<String, Tag> newMap = new LinkedHashMap<>();
         for (Entry<String, Tag> entry : this.value.entrySet()) {
-            newMap.put(entry.getKey(), entry.getValue().clone());
+            newMap.put(entry.getKey(), entry.getValue().copy());
         }
 
         return new CompoundTag(newMap);

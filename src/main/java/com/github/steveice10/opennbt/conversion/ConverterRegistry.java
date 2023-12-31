@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A registry mapping tags and value types to converters.
  */
-public class ConverterRegistry {
+public final class ConverterRegistry {
     private static final Int2ObjectMap<TagConverter<? extends Tag, ?>> TAG_TO_CONVERTER = new Int2ObjectOpenHashMap<>();
     private static final Map<Class<?>, TagConverter<? extends Tag, ?>> TYPE_TO_CONVERTER = new HashMap<>();
 

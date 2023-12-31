@@ -31,6 +31,12 @@ public class StringTag extends Tag {
         this.value = value;
     }
 
+    public static StringTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        final String value = in.readUTF();
+        tagLimiter.countBytes(2 * value.length()); // More or less, ignoring the length reading
+        return new StringTag(value);
+    }
+
     @Override
     public String getValue() {
         return this.value;
@@ -54,12 +60,6 @@ public class StringTag extends Tag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        this.value = in.readUTF();
-        tagLimiter.countBytes(2 * value.length()); // More or less, ignoring the length reading
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeUTF(this.value);
     }
@@ -78,7 +78,7 @@ public class StringTag extends Tag {
     }
 
     @Override
-    public final StringTag clone() {
+    public StringTag copy() {
         return new StringTag(this.value);
     }
 

@@ -28,6 +28,11 @@ public class ByteTag extends NumberTag {
         this.value = value;
     }
 
+    public static ByteTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        tagLimiter.countByte();
+        return new ByteTag(in.readByte());
+    }
+
     /**
      * @deprecated use {@link #asByte()}
      */
@@ -52,12 +57,6 @@ public class ByteTag extends NumberTag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        tagLimiter.countByte();
-        this.value = in.readByte();
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeByte(this.value);
     }
@@ -76,7 +75,7 @@ public class ByteTag extends NumberTag {
     }
 
     @Override
-    public final ByteTag clone() {
+    public ByteTag copy() {
         return new ByteTag(this.value);
     }
 

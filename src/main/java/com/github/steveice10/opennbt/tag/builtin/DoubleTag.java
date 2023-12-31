@@ -28,6 +28,11 @@ public class DoubleTag extends NumberTag {
         this.value = value;
     }
 
+    public static DoubleTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
+        tagLimiter.countDouble();
+        return new DoubleTag(in.readDouble());
+    }
+
     /**
      * @deprecated use {@link #asDouble()}
      */
@@ -52,12 +57,6 @@ public class DoubleTag extends NumberTag {
     }
 
     @Override
-    public void read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        tagLimiter.countDouble();
-        this.value = in.readDouble();
-    }
-
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeDouble(this.value);
     }
@@ -76,7 +75,7 @@ public class DoubleTag extends NumberTag {
     }
 
     @Override
-    public final DoubleTag clone() {
+    public DoubleTag copy() {
         return new DoubleTag(this.value);
     }
 
