@@ -119,7 +119,7 @@ public class ByteArrayTag extends NumberArrayTag {
 
     @Override
     public ByteArrayTag copy() {
-        return new ByteArrayTag(this.value);
+        return new ByteArrayTag(this.value.clone());
     }
 
     @Override
