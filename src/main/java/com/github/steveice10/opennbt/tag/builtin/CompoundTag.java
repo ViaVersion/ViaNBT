@@ -140,6 +140,26 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
         return (T) this.value.get(tagName);
     }
 
+    public @Nullable StringTag getStringTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof StringTag ? (StringTag) tag : null;
+    }
+
+    public @Nullable CompoundTag getCompoundTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof CompoundTag ? (CompoundTag) tag : null;
+    }
+
+    public @Nullable ListTag getListTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof ListTag ? (ListTag) tag : null;
+    }
+
+    public @Nullable NumberTag getNumberTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof NumberTag ? (NumberTag) tag : null;
+    }
+
     /**
      * Puts the tag into this compound tag.
      *
@@ -258,8 +278,7 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
             tag.write(out);
         }
 
-        // End
-        out.writeByte(0);
+        out.writeByte(TagRegistry.END);
     }
 
     @Override
