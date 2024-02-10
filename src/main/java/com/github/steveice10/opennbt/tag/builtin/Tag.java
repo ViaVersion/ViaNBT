@@ -28,6 +28,8 @@ public abstract class Tag {
 
     /**
      * Returns the unchecked value of this tag.
+     * <p>
+     * <b>The generic of this method might be removed in a later version</b>
      *
      * @param <T> expected type
      * @return unchecked value of this tag

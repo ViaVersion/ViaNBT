@@ -130,6 +130,8 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
 
     /**
      * Gets the tag.
+     * <p>
+     * <b>This will have its generic removed and instead return a raw tag in the future.</b>
      *
      * @param <T>     Type of tag to get.
      * @param tagName Name of the tag.
@@ -160,8 +162,25 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
         return tag instanceof NumberTag ? (NumberTag) tag : null;
     }
 
+    public @Nullable ByteArrayTag getByteArrayTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof ByteArrayTag ? (ByteArrayTag) tag : null;
+    }
+
+    public @Nullable IntArrayTag getIntArrayTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof IntArrayTag ? (IntArrayTag) tag : null;
+    }
+
+    public @Nullable LongArrayTag getLongArrayTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof LongArrayTag ? (LongArrayTag) tag : null;
+    }
+
     /**
      * Puts the tag into this compound tag.
+     * <p>
+     * <b>This will have its generic removed and instead return a raw tag in the future.</b>
      *
      * @param <T>     Type of tag to put.
      * @param tagName Name of the tag.
@@ -211,6 +230,8 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
 
     /**
      * Removes a tag from this compound tag.
+     * <p>
+     * <b>This will have its generic removed and instead return a raw tag in the future.</b>
      *
      * @param <T>     Type of tag to remove.
      * @param tagName Name of the tag to remove.

@@ -51,7 +51,9 @@ public class ByteTag extends NumberTag {
      * Sets the value of this tag.
      *
      * @param value New value of this tag.
+     * @deprecated number tags will be immutable in the future
      */
+    @Deprecated
     public void setValue(byte value) {
         this.value = value;
     }

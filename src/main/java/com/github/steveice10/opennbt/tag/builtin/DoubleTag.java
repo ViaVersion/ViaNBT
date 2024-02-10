@@ -51,7 +51,9 @@ public class DoubleTag extends NumberTag {
      * Sets the value of this tag.
      *
      * @param value New value of this tag.
+     * @deprecated number tags will be immutable in the future
      */
+    @Deprecated
     public void setValue(double value) {
         this.value = value;
     }
