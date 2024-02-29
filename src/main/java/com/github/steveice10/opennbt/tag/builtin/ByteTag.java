@@ -28,6 +28,15 @@ public class ByteTag extends NumberTag {
         this.value = value;
     }
 
+    /**
+     * Creates a tag.
+     *
+     * @param value The value of the tag.
+     */
+    public ByteTag(boolean value) {
+        this.value = (byte) (value ? 1 : 0);
+    }
+
     public static ByteTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
         tagLimiter.countByte();
         return new ByteTag(in.readByte());

@@ -5,7 +5,7 @@
 
     <groupId>com.viaversion</groupId>
     <artifactId>nbt</artifactId>
-    <version>4.2.0</version>
+    <version>4.3.0</version>
     <packaging>jar</packaging>
 
     <name>ViaNBT</name>
