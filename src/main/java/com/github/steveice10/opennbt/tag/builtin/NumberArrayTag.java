@@ -14,5 +14,5 @@ public abstract class NumberArrayTag extends Tag {
      *
      * @return a new list tag
      */
-    public abstract ListTag toListTag();
+    public abstract ListTag<? extends NumberTag> toListTag();
 }

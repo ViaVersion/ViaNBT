@@ -76,7 +76,7 @@ final class TagStringReader {
         throw this.buffer.makeError("Unterminated compound tag!");
     }
 
-    public ListTag list() throws StringifiedTagParseException {
+    public ListTag<?> list() throws StringifiedTagParseException {
         final ListTag listTag = new ListTag();
         this.buffer.expect(Tokens.ARRAY_BEGIN);
         final boolean prefixedIndex = this.acceptLegacy && this.buffer.peek() == '0' && this.buffer.peek(1) == ':';

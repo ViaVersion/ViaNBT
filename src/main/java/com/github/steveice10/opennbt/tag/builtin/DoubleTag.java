@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * A tag containing a double.
  */
-public class DoubleTag extends NumberTag {
+public final class DoubleTag extends NumberTag {
     public static final int ID = 6;
     private double value;
 

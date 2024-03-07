@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A tag containing an integer array.
  */
-public class IntArrayTag extends NumberArrayTag {
+public final class IntArrayTag extends NumberArrayTag {
     public static final int ID = 11;
     private static final int[] EMPTY_ARRAY = new int[0];
     private int[] value;
@@ -91,8 +91,8 @@ public class IntArrayTag extends NumberArrayTag {
     }
 
     @Override
-    public ListTag toListTag() {
-        final ListTag list = new ListTag();
+    public ListTag<IntTag> toListTag() {
+        final ListTag<IntTag> list = new ListTag<>(IntTag.class);
         for (final int i : this.value) {
             list.add(new IntTag(i));
         }

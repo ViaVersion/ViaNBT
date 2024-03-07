@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * A tag containing a byte.
  */
-public class ByteTag extends NumberTag {
+public final class ByteTag extends NumberTag {
     public static final int ID = 1;
     private byte value;
 

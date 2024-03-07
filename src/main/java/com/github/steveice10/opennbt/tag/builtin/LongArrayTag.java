@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A tag containing a long array.
  */
-public class LongArrayTag extends NumberArrayTag {
+public final class LongArrayTag extends NumberArrayTag {
     public static final int ID = 12;
     private static final long[] EMPTY_ARRAY = new long[0];
     private long[] value;
@@ -91,8 +91,8 @@ public class LongArrayTag extends NumberArrayTag {
     }
 
     @Override
-    public ListTag toListTag() {
-        final ListTag list = new ListTag(LongTag.class);
+    public ListTag<LongTag> toListTag() {
+        final ListTag<LongTag> list = new ListTag<>(LongTag.class);
         for (final long l : this.value) {
             list.add(new LongTag(l));
         }

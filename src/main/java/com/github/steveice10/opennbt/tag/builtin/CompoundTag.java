@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A compound tag containing other tags.
  */
-public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
+public final class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
     public static final int ID = 10;
     private Map<String, Tag> value;
 
@@ -152,9 +152,31 @@ public class CompoundTag extends Tag implements Iterable<Entry<String, Tag>> {
         return tag instanceof CompoundTag ? (CompoundTag) tag : null;
     }
 
-    public @Nullable ListTag getListTag(String tagName) {
+    public @Nullable ListTag<?> getListTag(String tagName) {
         final Tag tag = this.value.get(tagName);
-        return tag instanceof ListTag ? (ListTag) tag : null;
+        return tag instanceof ListTag<?> ? (ListTag<?>) tag : null;
+    }
+
+    public <T extends Tag> @Nullable ListTag<T> getListTag(String tagName, Class<T> type) {
+        final Tag tag = this.value.get(tagName);
+        if (!(tag instanceof ListTag<?>)) {
+            return null;
+        }
+
+        final Class<? extends Tag> elementType = ((ListTag<?>) tag).getElementType();
+        //noinspection unchecked
+        return elementType == type || elementType == null ? (ListTag<T>) tag : null;
+    }
+
+    public @Nullable ListTag<? extends NumberTag> getNumberListTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        if (!(tag instanceof ListTag<?>)) {
+            return null;
+        }
+
+        final Class<? extends Tag> elementType = ((ListTag<?>) tag).getElementType();
+        //noinspection unchecked
+        return elementType == null || NumberTag.class.isAssignableFrom(elementType) ? (ListTag<? extends NumberTag>) tag : null;
     }
 
     public @Nullable NumberTag getNumberTag(String tagName) {

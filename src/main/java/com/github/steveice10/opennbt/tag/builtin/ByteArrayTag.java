@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A tag containing a byte array.
  */
-public class ByteArrayTag extends NumberArrayTag {
+public final class ByteArrayTag extends NumberArrayTag {
     public static final int ID = 7;
     private static final byte[] EMPTY_ARRAY = new byte[0];
     private byte[] value;
@@ -90,8 +90,8 @@ public class ByteArrayTag extends NumberArrayTag {
     }
 
     @Override
-    public ListTag toListTag() {
-        final ListTag list = new ListTag(ByteTag.class);
+    public ListTag<ByteTag> toListTag() {
+        final ListTag<ByteTag> list = new ListTag<>(ByteTag.class);
         for (final byte b : this.value) {
             list.add(new ByteTag(b));
         }

@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * A tag containing an integer.
  */
-public class IntTag extends NumberTag {
+public final class IntTag extends NumberTag {
     public static final int ID = 3;
     private int value;
 

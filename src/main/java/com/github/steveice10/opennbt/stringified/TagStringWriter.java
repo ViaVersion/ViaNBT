@@ -102,7 +102,7 @@ final class TagStringWriter {
         return this;
     }
 
-    private TagStringWriter writeList(final ListTag tag) {
+    private TagStringWriter writeList(final ListTag<?> tag) {
         this.beginList();
         for (final Tag el : tag) {
             this.printAndResetSeparator();

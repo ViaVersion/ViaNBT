@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * A tag containing a float.
  */
-public class FloatTag extends NumberTag {
+public final class FloatTag extends NumberTag {
     public static final int ID = 5;
     private float value;
 

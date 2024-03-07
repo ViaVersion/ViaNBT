@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * A tag containing a long.
  */
-public class LongTag extends NumberTag {
+public final class LongTag extends NumberTag {
     public static final int ID = 4;
     private long value;
 

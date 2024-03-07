@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * A tag containing a short.
  */
-public class ShortTag extends NumberTag {
+public final class ShortTag extends NumberTag {
     public static final int ID = 2;
     private short value;
 

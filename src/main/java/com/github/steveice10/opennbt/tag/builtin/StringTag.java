@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * A tag containing a string.
  */
-public class StringTag extends Tag {
+public final class StringTag extends Tag {
     public static final int ID = 8;
     private String value;
 
