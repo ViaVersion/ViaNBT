@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -82,7 +83,7 @@ public final class ListTag<T extends Tag> extends Tag implements Iterable<T> {
 
     @Override
     public List<T> getValue() {
-        return this.value;
+        return this.value; // TODO Make unmodifiable
     }
 
     @Override
@@ -198,6 +199,10 @@ public final class ListTag<T extends Tag> extends Tag implements Iterable<T> {
 
     public boolean isEmpty() {
         return this.value.isEmpty();
+    }
+
+    public Stream<T> stream() {
+        return this.value.stream();
     }
 
     @Override
