@@ -193,6 +193,36 @@ public final class CompoundTag extends Tag implements Iterable<Entry<String, Tag
         return elementType == null || NumberTag.class.isAssignableFrom(elementType) ? (ListTag<? extends NumberTag>) tag : null;
     }
 
+    public @Nullable IntTag getIntTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof IntTag ? (IntTag) tag : null;
+    }
+
+    public @Nullable LongTag getLongTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof LongTag ? (LongTag) tag : null;
+    }
+
+    public @Nullable ShortTag getShortTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof ShortTag ? (ShortTag) tag : null;
+    }
+
+    public @Nullable ByteTag getByteTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof ByteTag ? (ByteTag) tag : null;
+    }
+
+    public @Nullable FloatTag getFloatTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof FloatTag ? (FloatTag) tag : null;
+    }
+
+    public @Nullable DoubleTag getDoubleTag(String tagName) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof DoubleTag ? (DoubleTag) tag : null;
+    }
+
     public @Nullable NumberTag getNumberTag(String tagName) {
         final Tag tag = this.value.get(tagName);
         return tag instanceof NumberTag ? (NumberTag) tag : null;
@@ -211,6 +241,81 @@ public final class CompoundTag extends Tag implements Iterable<Entry<String, Tag
     public @Nullable LongArrayTag getLongArrayTag(String tagName) {
         final Tag tag = this.value.get(tagName);
         return tag instanceof LongArrayTag ? (LongArrayTag) tag : null;
+    }
+
+    public @Nullable String getString(String tagName) {
+        return this.getString(tagName, null);
+    }
+
+    public @Nullable String getString(String tagName, @Nullable String def) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof StringTag ? ((StringTag) tag).getValue() : def;
+    }
+
+    public int getInt(String tagName) {
+        return this.getInt(tagName, 0);
+    }
+
+    public int getInt(String tagName, int def) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof NumberTag ? ((NumberTag) tag).asInt() : def;
+    }
+
+    public long getLong(String tagName) {
+        return this.getLong(tagName, 0L);
+    }
+
+    public long getLong(String tagName, long def) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof NumberTag ? ((NumberTag) tag).asLong() : def;
+    }
+
+    public short getShort(String tagName) {
+        return this.getShort(tagName, (short) 0);
+    }
+
+    public short getShort(String tagName, short def) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof NumberTag ? ((NumberTag) tag).asShort() : def;
+    }
+
+    public byte getByte(String tagName) {
+        return this.getByte(tagName, (byte) 0);
+    }
+
+    public byte getByte(String tagName, byte def) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof NumberTag ? ((NumberTag) tag).asByte() : def;
+    }
+
+    public float getFloat(String tagName) {
+        return this.getFloat(tagName, 0.0F);
+    }
+
+    public float getFloat(String tagName, float def) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof NumberTag ? ((NumberTag) tag).asFloat() : def;
+    }
+
+    public double getDouble(String tagName) {
+        return this.getDouble(tagName, 0.0D);
+    }
+
+    public double getDouble(String tagName, double def) {
+        final Tag tag = this.value.get(tagName);
+        return tag instanceof NumberTag ? ((NumberTag) tag).asDouble() : def;
+    }
+
+    public boolean getBoolean(String tagName) {
+        return this.getBoolean(tagName, false);
+    }
+
+    public boolean getBoolean(String tagName, boolean def) {
+        final Tag tag = this.value.get(tagName);
+        if (tag instanceof NumberTag) {
+            return ((NumberTag) tag).asBoolean();
+        }
+        return def;
     }
 
     /**
