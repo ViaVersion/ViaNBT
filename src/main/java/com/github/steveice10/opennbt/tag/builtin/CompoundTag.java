@@ -129,16 +129,30 @@ public final class CompoundTag extends Tag implements Iterable<Entry<String, Tag
     }
 
     /**
-     * Gets the tag.
+     * Returns a tag by name if present.
      * <p>
      * <b>This will have its generic removed and instead return a raw tag in the future.</b>
      *
-     * @param <T>     Type of tag to get.
-     * @param tagName Name of the tag.
-     * @return The tag.
+     * @param <T>     type of the tag
+     * @param tagName key of the tag
+     * @return tag if present, else null
+     * @see #getUnchecked(String)
      */
     @Nullable
     public <T extends Tag> T get(String tagName) {
+        return (T) this.value.get(tagName);
+    }
+
+    /**
+     * Returns a tag by name if present.
+     *
+     * @param <T>     type of the tag
+     * @param tagName key of the tag
+     * @return tag if present, else null
+     */
+    @Nullable
+    public <T extends Tag> T getUnchecked(String tagName) {
+        //noinspection unchecked
         return (T) this.value.get(tagName);
     }
 
@@ -258,9 +272,23 @@ public final class CompoundTag extends Tag implements Iterable<Entry<String, Tag
      * @param <T>     Type of tag to remove.
      * @param tagName Name of the tag to remove.
      * @return The removed tag.
+     * @see #removeUnchecked(String)
      */
     @Nullable
     public <T extends Tag> T remove(String tagName) {
+        return (T) this.value.remove(tagName);
+    }
+
+    /**
+     * Removes a tag from this compound tag.
+     *
+     * @param <T>     Type of tag to remove.
+     * @param tagName Name of the tag to remove.
+     * @return The removed tag.
+     */
+    @Nullable
+    public <T extends Tag> T removeUnchecked(String tagName) {
+        //noinspection unchecked
         return (T) this.value.remove(tagName);
     }
 
