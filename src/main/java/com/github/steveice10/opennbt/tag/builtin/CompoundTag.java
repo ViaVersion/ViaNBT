@@ -330,6 +330,9 @@ public final class CompoundTag extends Tag implements Iterable<Entry<String, Tag
      */
     @Nullable
     public <T extends Tag> T put(String tagName, T tag) {
+        if (tag == this) {
+            throw new IllegalArgumentException("Cannot add a tag to itself");
+        }
         return (T) this.value.put(tagName, tag);
     }
 
