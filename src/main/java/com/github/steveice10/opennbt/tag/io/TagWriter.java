@@ -60,7 +60,9 @@ public final class TagWriter {
      */
     public void write(final Path path, final Tag tag, final boolean compressed) throws IOException {
         if (!Files.exists(path)) {
-            Files.createDirectories(path.getParent());
+            if (path.getParent() != null) {
+                Files.createDirectories(path.getParent());
+            }
             Files.createFile(path);
         }
 
