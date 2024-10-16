@@ -36,8 +36,10 @@ public final class ByteArrayTag implements NumberArrayTag {
 
     public static ByteArrayTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
         tagLimiter.countInt();
-        byte[] value = new byte[in.readInt()];
-        tagLimiter.countBytes(value.length);
+        final int length = in.readInt();
+        tagLimiter.countBytes(length);
+
+        final byte[] value = new byte[length];
         in.readFully(value);
         return new ByteArrayTag(value);
     }
