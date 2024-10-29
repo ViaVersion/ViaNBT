@@ -196,7 +196,7 @@ final class TagStringWriter {
 
     private TagStringWriter beginArray(final char type) {
         this.beginList()
-                .out.append(type)
+                .out.append(Character.toUpperCase(type))
                 .append(Tokens.ARRAY_SIGNATURE_SEPARATOR);
         return this;
     }
