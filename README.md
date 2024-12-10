@@ -5,7 +5,7 @@ ViaNBT is a library for dealing with [NBT](https://minecraft.wiki/w/NBT_format) 
 This project is derived from an earlier version of [OpenNBT](https://github.com/GeyserMC/OpenNBT/) and contains various fundamental improvements and changes to it, including:
 
 * Most notably, move the tag name out the of tags themselves
-* `SNBT` for string serialization
+* `SNBT` for string serialization[^1]
 * Add primitive getter methods to number types
 * Don't wrap values given in Tag#setValue / Tag constructors
 * NumberTag and NumberArrayTag interfaces for easier number handling
@@ -15,7 +15,10 @@ This project is derived from an earlier version of [OpenNBT](https://github.com/
 * Update to Java 8
 * A bunch of other small improvements and fixes
 
-This project also includes code from [adventure](https://github.com/KyoriPowered/adventure) used for SNBT serialization.
+[^1]: Includes code from [adventure](https://github.com/KyoriPowered/adventure) used for SNBT serialization. It works well enough,
+but if you need more accurate SNBT parsing across different Minecraft versions,
+you can use [mcstructs](https://github.com/Lenni0451/MCStructs),
+or [Via's version of it using ViaNBT](https://github.com/ViaVersion/mcstructs-viafier).
 
 ## Dependency
 
