@@ -114,7 +114,13 @@ public class ListTag<T extends Tag> implements Tag, Iterable<T> {
     }
 
     private static @Nullable Tag unwrap(final Tag tag) {
-        return tag instanceof CompoundTag ? ((CompoundTag) tag).get("") : null;
+        if (tag instanceof CompoundTag) {
+            final CompoundTag compoundTag = (CompoundTag) tag;
+            if (compoundTag.size() == 1) {
+                return compoundTag.get("");
+            }
+        }
+        return null;
     }
 
     @Override
