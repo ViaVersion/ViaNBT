@@ -1,8 +1,8 @@
 package com.viaversion.nbt.tag;
 
 import com.viaversion.nbt.io.TagRegistry;
-import com.viaversion.nbt.stringified.SNBT;
 import com.viaversion.nbt.limiter.TagLimiter;
+import com.viaversion.nbt.stringified.SNBT;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -15,14 +15,18 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A tag containing a list of tags.
+ *
+ * @see MixedListTag
  */
-public final class ListTag<T extends Tag> implements Tag, Iterable<T> {
+public class ListTag<T extends Tag> implements Tag, Iterable<T> {
     public static final int ID = 9;
+    protected List<T> value;
     private Class<T> type;
-    private List<T> value;
 
     /**
      * Creates an empty list tag and no defined type.
+     *
+     * @deprecated use {@link MixedListTag} if you need to mix element types
      */
     @Deprecated
     public ListTag() {
@@ -65,7 +69,7 @@ public final class ListTag<T extends Tag> implements Tag, Iterable<T> {
         return read(in, id, type, tagLimiter, nestingLevel);
     }
 
-    private static <T extends Tag> ListTag<T> read(DataInput in, int id, Class<T> type, TagLimiter tagLimiter, int nestingLevel) throws IOException {
+    private static <T extends Tag> ListTag<?> read(DataInput in, int id, Class<T> type, TagLimiter tagLimiter, int nestingLevel) throws IOException {
         ListTag<T> listTag = new ListTag<>(type);
         int count = in.readInt();
         int newNestingLevel = nestingLevel + 1;
@@ -77,9 +81,40 @@ public final class ListTag<T extends Tag> implements Tag, Iterable<T> {
             } catch (IllegalArgumentException e) {
                 throw new IOException("Failed to create tag.", e);
             }
-            listTag.add(tag);
+
+            Tag wrappedTag = unwrap(tag);
+            if (wrappedTag != null) {
+                // Mixed types...
+                //noinspection unchecked
+                final MixedListTag mixedListTag = new MixedListTag(((ListTag) listTag).value);
+                mixedListTag.add(wrappedTag);
+
+                final int remaining = count - index - 1;
+                return readMixed(mixedListTag, in, tagLimiter, nestingLevel, remaining);
+            }
+
+            listTag.value.add(tag);
         }
         return listTag;
+    }
+
+    private static MixedListTag readMixed(MixedListTag listTag, DataInput in, TagLimiter tagLimiter, int nestingLevel, int count) throws IOException {
+        for (int index = 0; index < count; index++) {
+            Tag tag;
+            try {
+                tag = TagRegistry.read(CompoundTag.ID, in, tagLimiter, nestingLevel);
+            } catch (IllegalArgumentException e) {
+                throw new IOException("Failed to create tag.", e);
+            }
+
+            Tag wrappedTag = unwrap(tag);
+            listTag.add(wrappedTag != null ? wrappedTag : tag);
+        }
+        return listTag;
+    }
+
+    private static @Nullable Tag unwrap(final Tag tag) {
+        return tag instanceof CompoundTag ? ((CompoundTag) tag).get("") : null;
     }
 
     @Override
@@ -133,7 +168,7 @@ public final class ListTag<T extends Tag> implements Tag, Iterable<T> {
         return this.value.add(tag);
     }
 
-    private void checkAddedTag(T tag) {
+    protected void checkAddedTag(T tag) {
         if (this.type == null) {
             this.type = (Class<T>) tag.getClass();
         } else {
