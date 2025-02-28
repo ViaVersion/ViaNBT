@@ -54,6 +54,24 @@ public class ListTag<T extends Tag> implements Tag, Iterable<T> {
         this.setValue(value);
     }
 
+    /**
+     * Creates a list tag, possibly of mixed types.
+     *
+     * @param value list of tags, can be mixed
+     * @return a new list tag
+     */
+    public static ListTag<?> of(List<Tag> value) {
+        int type = -1;
+        for (final Tag tag : value) {
+            if (type == -1) {
+                type = tag.getTagId();
+            } else if (type != tag.getTagId()) {
+                return new MixedListTag(value);
+            }
+        }
+        return new ListTag<>(value);
+    }
+
     public static ListTag<?> read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
         tagLimiter.checkLevel(nestingLevel);
         tagLimiter.countBytes(Byte.BYTES + Integer.BYTES);

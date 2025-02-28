@@ -39,6 +39,8 @@ import com.viaversion.nbt.tag.StringTag;
 import com.viaversion.nbt.tag.Tag;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
@@ -77,11 +79,11 @@ final class TagStringReader {
     }
 
     public ListTag<?> list() throws StringifiedTagParseException {
-        final ListTag listTag = new ListTag();
+        final List<Tag> list = new ArrayList<>();
         this.buffer.expect(Tokens.ARRAY_BEGIN);
         final boolean prefixedIndex = this.acceptLegacy && this.buffer.peek() == '0' && this.buffer.peek(1) == ':';
         if (!prefixedIndex && this.buffer.takeIf(Tokens.ARRAY_END)) {
-            return listTag;
+            return ListTag.of(list);
         }
         while (this.buffer.hasMore()) {
             if (prefixedIndex) {
@@ -89,9 +91,9 @@ final class TagStringReader {
             }
 
             final Tag next = this.tag();
-            listTag.add(next);
+            list.add(next);
             if (this.separatorOrCompleteWith(Tokens.ARRAY_END)) {
-                return listTag;
+                return ListTag.of(list);
             }
         }
         throw this.buffer.makeError("Reached end of file without end of list tag!");

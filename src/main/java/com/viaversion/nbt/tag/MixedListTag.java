@@ -52,6 +52,16 @@ public final class MixedListTag extends ListTag<Tag> {
         }
     }
 
+    @Override
+    public MixedListTag copy() {
+        final MixedListTag copy = new MixedListTag();
+        copy.value = new ArrayList<>(this.value.size());
+        for (final Tag tag : this.value) {
+            copy.add(tag.copy());
+        }
+        return copy;
+    }
+
     private static Tag wrap(final Tag tag) {
         if (tag instanceof CompoundTag) {
             return tag;
