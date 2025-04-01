@@ -43,6 +43,11 @@ public class ListTag<T extends Tag> implements Tag, Iterable<T> {
         this.value = new ArrayList<>();
     }
 
+    private ListTag(Class<T> type, List<T> value) {
+        this.type = type;
+        this.value = value;
+    }
+
     /**
      * Creates a list tag and value.
      * The list tag's type will be set to that of the first tag being added, or null if the given list is empty.
@@ -88,8 +93,8 @@ public class ListTag<T extends Tag> implements Tag, Iterable<T> {
     }
 
     private static <T extends Tag> ListTag<?> read(DataInput in, int id, Class<T> type, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        ListTag<T> listTag = new ListTag<>(type);
         int count = in.readInt();
+        ListTag<T> listTag = new ListTag<>(type, new ArrayList<>(Math.min(count, Short.MAX_VALUE)));
         int newNestingLevel = nestingLevel + 1;
         for (int index = 0; index < count; index++) {
             T tag;

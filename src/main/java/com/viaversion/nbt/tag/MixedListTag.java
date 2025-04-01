@@ -4,6 +4,7 @@ import com.viaversion.nbt.io.TagRegistry;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +68,7 @@ public final class MixedListTag extends ListTag<Tag> {
             return tag;
         }
 
-        final CompoundTag wrapper = new CompoundTag();
+        final CompoundTag wrapper = new CompoundTag(new LinkedHashMap<>(1, 1F));
         wrapper.put("", tag);
         return wrapper;
     }

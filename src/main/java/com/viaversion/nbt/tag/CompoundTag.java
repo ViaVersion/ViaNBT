@@ -1,8 +1,8 @@
 package com.viaversion.nbt.tag;
 
 import com.viaversion.nbt.io.TagRegistry;
-import com.viaversion.nbt.stringified.SNBT;
 import com.viaversion.nbt.limiter.TagLimiter;
+import com.viaversion.nbt.stringified.SNBT;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
      * Creates a tag.
      */
     public CompoundTag() {
-        this(new LinkedHashMap<>());
+        this(new LinkedHashMap<>(8));
     }
 
     /**
@@ -34,7 +34,7 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
      * @param value The value of the tag.
      */
     public CompoundTag(Map<String, Tag> value) {
-        this.value = new LinkedHashMap<>(value);
+        this.setValue(value);
     }
 
     /**
@@ -43,10 +43,7 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
      * @param value The value of the tag.
      */
     public CompoundTag(LinkedHashMap<String, Tag> value) {
-        if (value == null) {
-            throw new NullPointerException("value cannot be null");
-        }
-        this.value = value;
+        this.setValue(value);
     }
 
     public static CompoundTag read(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
@@ -92,10 +89,7 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
      * @param value New value of this tag.
      */
     public void setValue(Map<String, Tag> value) {
-        if (value == null) {
-            throw new NullPointerException("value cannot be null");
-        }
-        this.value = new LinkedHashMap<>(value);
+        this.setValue(new LinkedHashMap<>(value));
     }
 
     /**
@@ -104,8 +98,10 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
      * @param value New value of this tag.
      */
     public void setValue(LinkedHashMap<String, Tag> value) {
-        if (value == null) {
-            throw new NullPointerException("value cannot be null");
+        for (Entry<String, Tag> entry : value.entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) {
+                throw new IllegalArgumentException("key and value cannot be null");
+            }
         }
         this.value = value;
     }
@@ -329,6 +325,9 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
      */
     @Nullable
     public Tag put(String tagName, Tag tag) {
+        if (tag == null) {
+            throw new IllegalArgumentException("Cannot add a null tag");
+        }
         if (tag == this) {
             throw new IllegalArgumentException("Cannot add a tag to itself");
         }
@@ -473,7 +472,7 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
 
     @Override
     public CompoundTag copy() {
-        LinkedHashMap<String, Tag> newMap = new LinkedHashMap<>();
+        LinkedHashMap<String, Tag> newMap = new LinkedHashMap<>(this.value.size());
         for (Entry<String, Tag> entry : this.value.entrySet()) {
             newMap.put(entry.getKey(), entry.getValue().copy());
         }
