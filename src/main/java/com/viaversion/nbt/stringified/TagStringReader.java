@@ -341,21 +341,26 @@ final class TagStringReader {
 
     private int extractRadix(final StringBuilder builder, final String original) {
         int radixPrefixOffset = 0;
-        final int radix;
         final char first = builder.charAt(0);
         if (first == '+' || first == '-') {
             radixPrefixOffset = 1;
         }
+
+        // There should be more after '0b'/'0x', else it would be a regular byte tag or string
+        if (builder.length() < 3 + radixPrefixOffset) {
+            return DECIMAL_RADIX;
+        }
+
+        final int radix;
         if (original.startsWith("0b", radixPrefixOffset) || original.startsWith("0B", radixPrefixOffset)) {
             radix = BINARY_RADIX;
         } else if (original.startsWith("0x", radixPrefixOffset) || original.startsWith("0X", radixPrefixOffset)) {
             radix = HEX_RADIX;
         } else {
-            radix = DECIMAL_RADIX;
+            return DECIMAL_RADIX;
         }
-        if (radix != DECIMAL_RADIX) {
-            builder.delete(radixPrefixOffset, 2 + radixPrefixOffset);
-        }
+        // Remove the radix prefix
+        builder.delete(radixPrefixOffset, 2 + radixPrefixOffset);
         return radix;
     }
 
