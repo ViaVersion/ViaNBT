@@ -16,17 +16,20 @@ import com.viaversion.nbt.tag.StringTag;
 import com.viaversion.nbt.tag.Tag;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.DataInput;
 import java.io.IOException;
-import org.jetbrains.annotations.Nullable;
+import java.util.Arrays;
 
 /**
  * A registry containing different tag classes.
  */
 public final class TagRegistry {
     public static final int END = 0;
-    private static final int HIGHEST_ID = LongArrayTag.ID;
-    private static final RegisteredTagType[] TAGS = new RegisteredTagType[HIGHEST_ID + 1];
+
+    // Initial capacity by the old "top" ID, then expand dynamically
+    private static RegisteredTagType[] TAGS = new RegisteredTagType[LongArrayTag.ID + 1];
     private static final Object2IntMap<Class<? extends Tag>> TAG_TO_ID = new Object2IntOpenHashMap<>();
 
     static {
@@ -46,24 +49,31 @@ public final class TagRegistry {
         register(LongArrayTag.ID, LongArrayTag.class, (in, tagLimiter, nestingLevel) -> LongArrayTag.read(in, tagLimiter));
     }
 
+    private static void ensureCapacity(int id) {
+        if (id >= TAGS.length) {
+            int newLen = Math.max(id + 1, TAGS.length << 1);
+            TAGS = Arrays.copyOf(TAGS, newLen);
+        }
+    }
+
     /**
      * Registers a tag class.
      *
      * @param id  ID of the tag.
      * @param tag Tag class to register.
-     * @throws IllegalArgumentException if the id is unexpectedly out of bounds, or if the id or tag have already been registered
+     * @throws IllegalArgumentException if id < 0, or if the id or tag have already been registered
      */
-    public static <T extends Tag> void register(int id, Class<T> tag, TagSupplier<T> supplier) {
-        if (id < 0 || id > HIGHEST_ID) {
-            throw new IllegalArgumentException("Tag ID must be between 0 and " + HIGHEST_ID);
+    public static synchronized <T extends Tag> void register(int id, Class<T> tag, TagSupplier<T> supplier) {
+        if (id < 0) {
+            throw new IllegalArgumentException("Tag ID must be >= 0");
         }
+        ensureCapacity(id);
         if (TAGS[id] != null) {
             throw new IllegalArgumentException("Tag ID \"" + id + "\" is already in use.");
         }
         if (TAG_TO_ID.containsKey(tag)) {
             throw new IllegalArgumentException("Tag \"" + tag.getSimpleName() + "\" is already registered.");
         }
-
         TAGS[id] = new RegisteredTagType(tag, supplier);
         TAG_TO_ID.put(tag, id);
     }
@@ -76,7 +86,7 @@ public final class TagRegistry {
      */
     @Nullable
     public static Class<? extends Tag> getClassFor(int id) {
-        return id >= 0 && id < TAGS.length ? TAGS[id].type : null;
+        return (id >= 0 && id < TAGS.length && TAGS[id] != null) ? TAGS[id].type : null;
     }
 
     /**
@@ -90,22 +100,21 @@ public final class TagRegistry {
     }
 
     /**
-     * Creates an instance of the tag with the given id, using the String constructor.
+     * Creates an instance of the tag with the given id.
      *
      * @param id Id of the tag.
      * @return The created tag.
-     * @throws IllegalArgumentException if no tags is registered over the provided id
+     * @throws IllegalArgumentException if no tag is registered over the provided id
      */
     public static Tag read(int id, DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException {
-        TagSupplier<?> supplier = id > 0 && id < TAGS.length ? TAGS[id].supplier : null;
-        if (supplier == null) {
+        RegisteredTagType entry = (id > 0 && id < TAGS.length) ? TAGS[id] : null;
+        if (entry == null) {
             throw new IllegalArgumentException("Could not find tag with ID \"" + id + "\".");
         }
-        return supplier.create(in, tagLimiter, nestingLevel);
+        return entry.supplier.create(in, tagLimiter, nestingLevel);
     }
 
     private static final class RegisteredTagType {
-
         private final Class<? extends Tag> type;
         private final TagSupplier<? extends Tag> supplier;
 
@@ -117,7 +126,6 @@ public final class TagRegistry {
 
     @FunctionalInterface
     public interface TagSupplier<T extends Tag> {
-
         T create(DataInput in, TagLimiter tagLimiter, int nestingLevel) throws IOException;
     }
 }
