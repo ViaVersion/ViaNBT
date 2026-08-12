@@ -98,8 +98,10 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
      * @param value New value of this tag.
      */
     public void setValue(LinkedHashMap<String, Tag> value) {
-        if (value.containsKey(null) || value.containsValue(null)) {
-            throw new IllegalArgumentException("key and value cannot be null");
+        for (Entry<String, Tag> entry : value.entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) {
+                throw new IllegalArgumentException("key and value cannot be null");
+            }
         }
         this.value = value;
     }
