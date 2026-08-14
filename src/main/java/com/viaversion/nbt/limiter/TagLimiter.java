@@ -54,7 +54,7 @@ public interface TagLimiter {
     }
 
     default void countFloat() {
-        this.countBytes(Double.BYTES);
+        this.countBytes(Float.BYTES);
     }
 
     default void countLong() {
