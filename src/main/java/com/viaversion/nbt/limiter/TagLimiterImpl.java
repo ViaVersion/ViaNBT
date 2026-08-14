@@ -4,11 +4,14 @@ final class TagLimiterImpl implements TagLimiter {
 
     private final int maxBytes;
     private final int maxLevels;
+    private final int maxTags;
     private int bytes;
+    private int tags;
 
-    TagLimiterImpl(int maxBytes, int maxLevels) {
+    TagLimiterImpl(int maxBytes, int maxLevels, int maxTags) {
         this.maxBytes = maxBytes;
         this.maxLevels = maxLevels;
+        this.maxTags = maxTags;
     }
 
     @Override
@@ -16,6 +19,13 @@ final class TagLimiterImpl implements TagLimiter {
         this.bytes += bytes;
         if (this.bytes >= maxBytes) {
             throw new IllegalArgumentException("NBT data larger than expected (capped at " + this.maxBytes + ")");
+        }
+    }
+
+    @Override
+    public void countTag() {
+        if (++this.tags >= this.maxTags) {
+            throw new IllegalArgumentException("More NBT tags than expected (capped at " + this.maxTags + ")");
         }
     }
 
@@ -37,12 +47,23 @@ final class TagLimiterImpl implements TagLimiter {
     }
 
     @Override
+    public int maxTags() {
+        return maxTags;
+    }
+
+    @Override
     public int bytes() {
         return bytes;
     }
 
     @Override
+    public int tags() {
+        return tags;
+    }
+
+    @Override
     public void reset() {
         this.bytes = 0;
+        this.tags = 0;
     }
 }

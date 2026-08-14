@@ -101,6 +101,7 @@ public final class TagRegistry {
         if (supplier == null) {
             throw new IllegalArgumentException("Could not find tag with ID \"" + id + "\".");
         }
+        tagLimiter.countTag();
         return supplier.create(in, tagLimiter, nestingLevel);
     }
 

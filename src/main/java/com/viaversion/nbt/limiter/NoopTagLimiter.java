@@ -12,6 +12,10 @@ final class NoopTagLimiter implements TagLimiter {
     }
 
     @Override
+    public void countTag() {
+    }
+
+    @Override
     public void checkLevel(int nestedLevel) {
     }
 
@@ -26,7 +30,17 @@ final class NoopTagLimiter implements TagLimiter {
     }
 
     @Override
+    public int maxTags() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
     public int bytes() {
+        return 0;
+    }
+
+    @Override
+    public int tags() {
         return 0;
     }
 
