@@ -37,7 +37,7 @@ public final class LongArrayTag implements NumberArrayTag {
     public static LongArrayTag read(DataInput in, TagLimiter tagLimiter) throws IOException {
         tagLimiter.countInt();
         final int length = in.readInt();
-        tagLimiter.countBytes(Long.BYTES * length);
+        tagLimiter.countBytes((long) Long.BYTES * length);
 
         final long[] value = new long[length];
         for (int index = 0; index < value.length; index++) {

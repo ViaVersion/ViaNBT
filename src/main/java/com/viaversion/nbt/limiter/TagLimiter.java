@@ -45,7 +45,7 @@ public interface TagLimiter {
      * @param bytes bytes to count
      * @throws IllegalArgumentException if max bytes count is exceeded
      */
-    void countBytes(int bytes);
+    void countBytes(long bytes);
 
     /**
      * Counts a single created tag and throws an exception if the max tag count is exceeded.
@@ -115,7 +115,7 @@ public interface TagLimiter {
      *
      * @return currently read bytes
      */
-    int bytes();
+    long bytes();
 
     /**
      * Returns the number of tags created so far.

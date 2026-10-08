@@ -8,7 +8,7 @@ final class NoopTagLimiter implements TagLimiter {
     }
 
     @Override
-    public void countBytes(int bytes) {
+    public void countBytes(long bytes) {
     }
 
     @Override
@@ -35,7 +35,7 @@ final class NoopTagLimiter implements TagLimiter {
     }
 
     @Override
-    public int bytes() {
+    public long bytes() {
         return 0;
     }
 

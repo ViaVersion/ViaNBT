@@ -37,7 +37,7 @@ public final class IntArrayTag implements NumberArrayTag {
     public static IntArrayTag read(final DataInput in, final TagLimiter tagLimiter) throws IOException {
         tagLimiter.countInt();
         final int length = in.readInt();
-        tagLimiter.countBytes(Integer.BYTES * length);
+        tagLimiter.countBytes((long) Integer.BYTES * length);
 
         final int[] value = new int[length];
         for (int index = 0; index < value.length; index++) {
