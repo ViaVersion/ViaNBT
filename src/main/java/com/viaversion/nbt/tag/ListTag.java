@@ -94,6 +94,7 @@ public class ListTag<T extends Tag> implements Tag, Iterable<T> {
 
     private static <T extends Tag> ListTag<?> read(DataInput in, int id, Class<T> type, TagLimiter tagLimiter, int nestingLevel) throws IOException {
         int count = in.readInt();
+        tagLimiter.countBytes((long) Integer.BYTES * count);
         ListTag<T> listTag = new ListTag<>(type, new ArrayList<>(Math.min(count, Short.MAX_VALUE)));
         int newNestingLevel = nestingLevel + 1;
         for (int index = 0; index < count; index++) {
