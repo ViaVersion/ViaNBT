@@ -195,7 +195,7 @@ public final class CompoundTag implements Tag, Iterable<Entry<String, Tag>> {
 
         final Class<? extends Tag> elementType = ((ListTag<?>) tag).getElementType();
         //noinspection unchecked
-        return elementType == type || elementType == null ? (ListTag<T>) tag : null;
+        return elementType == type || elementType == null && (!(tag instanceof MixedListTag) || type == Tag.class) ? (ListTag<T>) tag : null;
     }
 
     public @Nullable ListTag<? extends NumberTag> getNumberListTag(String tagName) {

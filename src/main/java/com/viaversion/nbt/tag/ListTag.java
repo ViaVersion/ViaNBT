@@ -207,7 +207,7 @@ public class ListTag<T extends Tag> implements Tag, Iterable<T> {
     }
 
     private void checkType(Tag tag) {
-        if (tag.getClass() != this.type) {
+        if (!this.type.isAssignableFrom(tag.getClass())) {
             throw new IllegalArgumentException("Tag type " + tag.getClass().getSimpleName() + " differs from list type " + this.type.getSimpleName());
         }
     }
